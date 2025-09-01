@@ -51,11 +51,11 @@ CREATE TABLE `student` (
   PRIMARY KEY (`id_students`),
   KEY `id_paises` (`id_paises`),
   CONSTRAINT `student_ibfk_1` FOREIGN KEY (`id_paises`) REFERENCES `paises` (`id_paises`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 /*Data for the table `student` */
 
-insert  into `student`(`id_students`,`nombre`,`sexo`,`edad`,`nacimiento`,`id_paises`,`telefono`,`correo`,`domicilio`,`foto`,`lista`,`excel`) values (1,'sebastian',1,21,'1969-12-17',3,4827471182,'fdsfsd@gfd,com','hola','/uploads/documents/images.jpg','/home/sebastian/Documents/uploads/documents/lista.txt','/home/sebastian/Documents/uploads/documents/lista.csv'),(2,'elena',2,76,'2025-03-19',3,4771647617,'ujkajnhnd@gkma.com','yhnah','','',''),(3,'vazquez',3,43,'1984-10-25',1,4831926311,'','','','',''),(4,'luis',1,13,'2025-09-24',5,4794377263,'iklasdgyuab@gdiusn.com','fhhaks','','','');
+insert  into `student`(`id_students`,`nombre`,`sexo`,`edad`,`nacimiento`,`id_paises`,`telefono`,`correo`,`domicilio`,`foto`,`lista`,`excel`) values (1,'Willie Houston\r\n',1,18,'1969-12-17',8,4827471182,'willie@gmail.com\r\n','hola','/uploads/documents/images.jpg','/home/sebastian/Documents/uploads/documents/lista.txt','/home/sebastian/Documents/uploads/documents/lista.csv'),(2,'Doris Powell\r\n',2,25,'2025-03-19',3,4771647617,'doris 23@hotmail.com\r\n','yhnah','','',''),(3,'Milo Barrett\r\n',1,34,'1984-10-25',1,4831926311,'123juan@gmail.com\r\n','','','',''),(4,'Benjamin Hurst\r\n',1,23,'2025-09-24',5,4794377263,'dayne.baumbach@gmail.com\r\n','fhhaks','','',''),(5,'Caiden Chen\r\n',1,17,'2009-04-15',2,4913777173,'80leonora champlin@hotmail.com','fds','','',''),(6,'Caitlyn Holden',2,21,'1999-12-22',10,3488288324,'eudora.vandervort70@gmail.com','jjdjw','','',''),(7,'Kelvin Gardner',1,20,'2013-03-07',3,4883771456,'lorna_gottlieb91@yahoo.com','roowi','','',''),(8,'Enya Nash',2,17,'1983-09-09',7,5882774756,'johathan5@mail.net\r\n','pkqjhhr','','',''),(9,'Tina Chandler\r\n',2,31,'2008-01-10',4,9388462177,'bell.predovic58@gmail.com\r\n','mjqjfhha','','',''),(10,'Haroon Hudson',1,45,'2018-11-14',9,3991743991,'77elmira@hotmail.com\r\n','qyyrhha','','','');
 
 /*Table structure for table `vw_students` */
 
