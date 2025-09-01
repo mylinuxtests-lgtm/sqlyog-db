@@ -66,17 +66,17 @@ DROP TABLE IF EXISTS `vw_estudiantes`;
 
 /*!50001 CREATE TABLE  `vw_estudiantes`(
  `id_students` int(11) ,
- `nombre` varchar(50) ,
- `sexo` varchar(15) ,
- `edad` decimal(10,0) ,
- `nacimiento` date ,
- `pais` char(50) ,
- `telefono` decimal(10,0) ,
- `correo` varchar(50) ,
- `domicilio` varchar(255) ,
- `foto` varchar(255) ,
- `lista` varchar(255) ,
- `excel` varchar(255) 
+ `Nombre` varchar(50) ,
+ `Sexo` varchar(15) ,
+ `Edad` decimal(10,0) ,
+ `Nacimiento` date ,
+ `Pais` char(50) ,
+ `Telefono` decimal(10,0) ,
+ `Correo` varchar(50) ,
+ `Domicilio` varchar(255) ,
+ `Foto` varchar(255) ,
+ `Lista` varchar(255) ,
+ `Excel` varchar(255) 
 )*/;
 
 /*View structure for view vw_estudiantes */
@@ -84,7 +84,7 @@ DROP TABLE IF EXISTS `vw_estudiantes`;
 /*!50001 DROP TABLE IF EXISTS `vw_estudiantes` */;
 /*!50001 DROP VIEW IF EXISTS `vw_estudiantes` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vw_estudiantes` AS select `s`.`id_students` AS `id_students`,`s`.`nombre` AS `nombre`,case when `s`.`sexo` = 1 then 'Hombre' when `s`.`sexo` = 2 then 'Mujer' when `s`.`sexo` = 3 then 'Otro' else 'No especificado' end AS `sexo`,`s`.`edad` AS `edad`,`s`.`nacimiento` AS `nacimiento`,`p`.`pais` AS `pais`,`s`.`telefono` AS `telefono`,`s`.`correo` AS `correo`,`s`.`domicilio` AS `domicilio`,`s`.`foto` AS `foto`,`s`.`lista` AS `lista`,`s`.`excel` AS `excel` from (`student` `s` left join `paises` `p` on(`s`.`id_paises` = `p`.`id_paises`)) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vw_estudiantes` AS select `s`.`id_students` AS `id_students`,`s`.`nombre` AS `Nombre`,case when `s`.`sexo` = 1 then 'Hombre' when `s`.`sexo` = 2 then 'Mujer' when `s`.`sexo` = 3 then 'Otro' else 'No especificado' end AS `Sexo`,`s`.`edad` AS `Edad`,`s`.`nacimiento` AS `Nacimiento`,`p`.`pais` AS `Pais`,`s`.`telefono` AS `Telefono`,`s`.`correo` AS `Correo`,`s`.`domicilio` AS `Domicilio`,`s`.`foto` AS `Foto`,`s`.`lista` AS `Lista`,`s`.`excel` AS `Excel` from (`student` `s` left join `paises` `p` on(`s`.`id_paises` = `p`.`id_paises`)) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
