@@ -4,9 +4,10 @@ $servername = "localhost";
 $username   = "root";
 $password   = "0000";
 $dbname     = "students";
+$port       = "755";
 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname, $port);
 
 
 if ($conn->connect_error) {
@@ -21,8 +22,9 @@ SELECT
   sex.descripcion AS Sexo,
   s.edad          AS Edad,
   s.nacimiento    AS Fecha_Nacimiento,
-  p.pais          AS País,
-  s.telefono      AS Teléfono,
+  DATE_FORMAT(s.nacimiento, '%d-%m-%Y') AS Fecha_Nacimiento,
+  p.pais          AS Pais,
+  s.telefono      AS Telefono,
   s.correo        AS Correo,
   s.domicilio     AS Domicilio,
   s.foto          AS Foto,
@@ -48,8 +50,8 @@ if ($result->num_rows > 0) {
             <th>Sexo</th>
             <th>Edad</th>
             <th>Fecha Nacimiento</th>
-            <th>País</th>
-            <th>Teléfono</th>
+            <th>Pais</th>
+            <th>Telefono</th>
             <th>Correo</th>
             <th>Domicilio</th>
             <th>Foto</th>
@@ -64,19 +66,23 @@ if ($result->num_rows > 0) {
         echo "<td>".$row['Sexo']."</td>";
         echo "<td>".$row['Edad']."</td>";
         echo "<td>".$row['Fecha_Nacimiento']."</td>";
-        echo "<td>".$row['País']."</td>";
-        echo "<td>".$row['Teléfono']."</td>";
+        echo "<td>".$row['Pais']."</td>";
+        echo "<td>".$row['Telefono']."</td>";
         echo "<td>".$row['Correo']."</td>";
         echo "<td>".$row['Domicilio']."</td>";
         
         
-        echo "<td><img src=' ".$row['Foto']."' width='80'></td>";
+        echo "<td><img src='".$row['Foto']."' width='80'></td>";
         
         
-        echo "<td><a href=' ".$row['Lista']."'>Mostrar </a></td>";
+        echo "<td><a href='".$row['Lista']."'>Mostrar lista</a></td>";
         
         
-        echo "<td><a href=' ".$row['Excel']."'>Descargar Excel</a></td>";
+        echo "<td>
+        <a href='".$row['Excel']."' target='_blank'>
+            <img src='uploads/download.png' width='80' alt=''>
+        </a>
+        </td>";
         
         echo "</tr>";
     }
