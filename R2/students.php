@@ -1,5 +1,3 @@
-
-
 <?php
 
 $servername = "localhost";
@@ -78,7 +76,7 @@ if ($result->num_rows > 0) {
         echo "<td><a href=' ".$row['Lista']."'>Mostrar </a></td>";
         
         
-        echo "<td><a href=' ".$row['Excel']."'>Descargar</a></td>";
+        echo "<td><a href=' ".$row['Excel']."'>Descargar Excel</a></td>";
         
         echo "</tr>";
     }
@@ -92,6 +90,6 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="es">
-    
     <link rel="stylesheet" href="style.css" media="screen" />
+    <title>Base de datos</title>
 </html>
