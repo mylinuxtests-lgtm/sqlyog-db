@@ -72,15 +72,15 @@ if ($result->num_rows > 0) {
         echo "<td>".$row['Domicilio']."</td>";
         
         
-        echo "<td><img src='".$row['Foto']."' width='80'></td>";
+        echo "<td><img src='.".$row['Foto']."' width='80'></td>";
         
         
-        echo "<td><a href='".$row['Lista']."'>Mostrar lista</a></td>";
+        echo "<td><a href='.".$row['Lista']."'>Mostrar lista</a></td>";
         
         
         echo "<td>
-        <a href='".$row['Excel']."' target='_blank'>
-            <img src='uploads/download.png' width='80' alt=''>
+        <a href='.".$row['Excel']."' target='_blank'>
+            <img src='.uploads/download.png' width='80' alt=''>
         </a>
         </td>";
         
