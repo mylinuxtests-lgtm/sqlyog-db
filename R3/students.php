@@ -1,9 +1,9 @@
 <?php
 $servername = "localhost";
-$username   = "root";
-$password   = "0000";
-$dbname     = "students";
-$port       = "755";
+$username = "root";
+$password = "0000";
+$dbname = "students";
+$port = "755";
 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");
@@ -37,9 +37,9 @@ JOIN paises p ON s.id_paises = p.id_paises
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    echo "<h2>Estudiantes Registrados</h2>";
-    echo "<a href='Formulario.html'>Volver al Formulario</a><br><br>";
-    
+    echo "<h2>Registros</h2>";
+
+
     echo "<table border='1' cellpadding='5' style='border-collapse: collapse;'>";
     echo "<tr>
             <th>ID</th>
@@ -54,39 +54,52 @@ if ($result->num_rows > 0) {
             <th>Foto</th>
             <th>Lista</th>
             <th>Excel</th>
+            <th>Ver esta ID</th>
           </tr>";
-    
-    while($row = $result->fetch_assoc()) {
+
+    while ($row = $result->fetch_assoc()) {
         echo "<tr>";
-        echo "<td>".$row['ID']."</td>";
-        echo "<td>".$row['Nombre']."</td>";
-        echo "<td>".$row['Sexo']."</td>";
-        echo "<td>".$row['Edad']."</td>";
-        echo "<td>".$row['Fecha_Nacimiento']."</td>";
-        echo "<td>".$row['Pais']."</td>";
-        echo "<td>".$row['Telefono']."</td>";
-        echo "<td>".$row['Correo']."</td>";
-        echo "<td>".$row['Domicilio']."</td>";
-        
-        
-        echo "<td><img src='./".$row['Foto']."' width='80' height='100' style='object-fit: cover;'></td>";
-        
-        
-        echo "<td><a href='./".$row['Lista']."' download>Mostrar lista</a></td>";
-        
-        
+        echo "<td>" . $row['ID'] . "</td>";
+        echo "<td>" . $row['Nombre'] . "</td>";
+        echo "<td>" . $row['Sexo'] . "</td>";
+        echo "<td>" . $row['Edad'] . "</td>";
+        echo "<td>" . $row['Fecha_Nacimiento'] . "</td>";
+        echo "<td>" . $row['Pais'] . "</td>";
+        echo "<td>" . $row['Telefono'] . "</td>";
+        echo "<td>" . $row['Correo'] . "</td>";
+        echo "<td>" . $row['Domicilio'] . "</td>";
+
+
+        echo "<td><img src='./" . $row['Foto'] . "' width='80' height='100' style='object-fit: cover;'></td>";
+
+
+        echo "<td><a href='./" . $row['Lista'] . "''>
+        <img src='./uploads/notes-svgrepo-com.svg' width='80' alt='Mostrar Lista'>
+        </a>
+        </td>";
+
+
         echo "<td>
-                <a href='./".$row['Excel']."'>
-                    <img src='./uploads/download.png' width='80' alt=''>
+                <a href='./" . $row['Excel'] . "''>
+                    <img src='./uploads/excel-svgrepo-com.svg' width='80' alt='Descargar Excel'>
                 </a>
               </td>";
-        
+
+        echo "<td>
+        <a href='student_information.php?id=" . $row['ID'] . "''>
+           <img src='./uploads/magnifying.png' width='80' alt='Ver detalles'>
+        </a>
+      </td>";
+
         echo "</tr>";
     }
     echo "</table>";
+
+    echo "<a href='Formulario.html' class='btn'>
+    <img src='./uploads/return-svgrepo-com.svg' width='80' alt='Volver al Formulario'</a><br><br>";
 } else {
     echo "No se encontraron resultados.";
-    echo "<br><a href='Formulario.html'>Regresar al Formulario</a>";
+    echo "<br><a href='Formulario.html' class='btn'>Regresar al Formulario</a>";
 }
 
 $conn->close();
@@ -94,10 +107,13 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <link rel="stylesheet" href="sstyle.css" media="screen" />
     <title>Base de datos</title>
 </head>
+
 <body>
 </body>
+
 </html>
