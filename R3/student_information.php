@@ -1,9 +1,6 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "0000";
-$dbname = "students";
-$port = "755";
+require_once 'conn.php';
+
 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");

@@ -1,9 +1,5 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "0000";
-$dbname = "students";
-$port = "755";
+require_once 'conn.php';
 
 $conn = new mysqli($servername, $username, $password, $dbname, $port);
 $conn->set_charset("utf8mb4");
@@ -79,85 +75,10 @@ $sql = "INSERT INTO student (nombre, id_sexo, edad, nacimiento, id_paises, telef
         VALUES ('$nombre', $id_sexo, $edad, '$nacimiento', $id_paises, '$telefono', '$correo', '$domicilio', '$upload_dir$foto_name', '$upload_dir$lista_name', '$upload_dir$excel_name')";
 
 if ($conn->query($sql) === TRUE) {
-    echo '<!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css" media="screen" />
-        <title>Registro Exitoso</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #99968dab;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-            }
-            .success-container {
-                background-color: rgba(231, 227, 163, 0.97);
-                padding: 40px;
-                border-radius: 10px;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.959);
-                text-align: center;
-                max-width: 600px;
-                width: 90%;
-            }
-            .success-message {
-                font-size: 28px;
-                font-weight: bold;
-                color: #921414ff;
-                margin-bottom: 30px;
-                padding: 20px;
-                background-color: rgba(255, 255, 255, 0.8);
-                border-radius: 5px;
-                border: 2px solid #0e4e08;
-            }
-            .button-container {
-                display: flex;
-                justify-content: center;
-                gap: 20px;
-                flex-wrap: wrap;
-            }
-            .btn {
-                display: inline-block;
-                padding: 15px 30px;
-                background-color: #0e4e08;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                font-size: 18px;
-                transition: background-color 0.3s;
-                border: none;
-                cursor: pointer;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            }
-            .btn:hover {
-                background-color: #62a045;
-            }
-            .btn-secondary {
-                background-color: #f11515ff;
-            }
-            .btn-secondary:hover {
-                background-color: #ca1414ff;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="success-container">
-            <div class="success-message">
-                ¡Registro guardado exitosamente!
-            </div>
-            <div class="button-container">
-                <a href="students.php" class="btn">Ver todos los registros</a>
-                <a href="Formulario.html" class="btn btn-secondary">Volver al formulario</a>
-            </div>
-        </div>
-    </body>
-    </html>';
-} else {
+        $last_id = $conn->insert_id;
+    header("Location: student_information.php?id=" . $last_id);
+    }
+ else {
     echo "Error: " . $sql . "<br>" . $conn->error;
 }
 
