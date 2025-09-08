@@ -60,8 +60,8 @@ if ($result->num_rows > 0) {
         echo "<tr>";
         echo "<td>$label</td>";
 
+        // Mostrar el cuadro especifique si es "Otro" y tiene valor
         if ($key === 'Sexo') {
-            // Mostrar sexo con especificación si es "Otro" y tiene valor
             if ($row['Sexo'] == 'Otro' && !empty($row['Especifique'])) {
                 echo "<td>" . htmlspecialchars($row['Sexo'] . " - " . $row['Especifique']) . "</td>";
             } else {

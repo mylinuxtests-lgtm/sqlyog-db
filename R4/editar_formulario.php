@@ -110,7 +110,7 @@ $especifique_valor = $student['especifique'] ?? "";
         <div class="form-box">
             <label for="country" class="col-sm-3 control-label">Nacionalidad: <span class="error">*</span><br /></label>
             <div class="col-12">
-                <select id="country" name="country" class="form-control">
+                <select id="country" name="country" class="form-control" onchange="actualizarFormatoTelefono()">
                     <option value="Alemania" <?php echo ($pais_valor == 'Alemania') ? 'selected' : ''; ?>>Alemania
                     </option>
                     <option value="Brazil" <?php echo ($pais_valor == 'Brazil') ? 'selected' : ''; ?>>Brazil</option>
@@ -136,10 +136,11 @@ $especifique_valor = $student['especifique'] ?? "";
             <img src="<?php echo $student['foto']; ?>" alt="Foto actual" width="100" height="150" /><br /><br />
         </div>
         <div class="form-box">
-            <label for="phone"> Telefono: <span class="error">*</span><br /></label>
-            <input type="tel" id="phone" name="phone" placeholder="000-0000000" pattern="[0-9]{3}-[0-9]{7}"
-                maxlength="11" value="<?php echo htmlspecialchars($student['telefono']); ?>" required /><br /><br />
-            <small>Debe ser 10 digitos, como el siguiente formato: 473-1111111</small><br /><br />
+            <label for="phone"> Teléfono: <span class="error">*</span><br /></label>
+            <input type="tel" id="phone" name="phone" placeholder="000-00000000" pattern="[0-9]{3}-[0-9]{7,11}"
+                maxlength="15" value="<?php echo htmlspecialchars($student['telefono']); ?>" required /><br /><br />
+            <small id="phoneHelp">Debe seguir el siguiente formato: extensión-número (ej:
+                473-1234567)</small><br /><br />
         </div>
         <div class="form-box">
             <label for="correo"> Correo: <span class="error">*</span><br /></label>
@@ -226,6 +227,99 @@ $especifique_valor = $student['especifique'] ?? "";
                 );
             });
         })();
+
+        
+        const phoneFormats = {
+            Alemania: {
+                pattern: "[0-9]{2,4}-[0-9]{6,13}",
+                placeholder: "49-12345678",
+                example: "código de área-número (ej: 49-12345678)",
+            },
+            Brazil: {
+                pattern: "[0-9]{2}-[0-9]{10}",
+                placeholder: "55-912345678",
+                example: "código de área-número (ej: 55-912345678)",
+            },
+            Canada: {
+                pattern: "[0-9]{1,3}-[0-9]{10}",
+                placeholder: "1-1234567",
+                example: "código de área-número (ej: 1-1234567)",
+            },
+            China: {
+                pattern: "[0-9]{2,3}-[0-9]{5,12}",
+                placeholder: "86-12345678",
+                example: "código de área-número (ej: 86-12345678)",
+            },
+            "Estados Unidos": {
+                pattern: "[0-9]{1,3}-[0-9]{10}",
+                placeholder: "1-5550123",
+                example: "código de área-número (ej: 1-5550123)",
+            },
+            India: {
+                pattern: "[0-9]{2,5}-[0-9]{7,10}",
+                placeholder: "91-23456789",
+                example: "código STD-número (ej: 91-23456789)",
+            },
+            Indonesia: {
+                pattern: "[0-9]{2,4}-[0-9]{5,10}",
+                placeholder: "62-12345678",
+                example: "código de área-número (ej: 62-1234567)",
+            },
+            Japon: {
+                pattern: "[0-9]{2,4}-[0-9]{5,13}",
+                placeholder: "81-12345678",
+                example: "código de área-número (ej: 81-12345678)",
+            },
+            Mexico: {
+                pattern: "[0-9]{2,3}-[0-9]{10}",
+                placeholder: "52-12345678",
+                example: "lada-número (ej: 52-12345678)",
+            },
+            Rusia: {
+                pattern: "[0-9]{3}-[0-9]{10}",
+                placeholder: "7-1234567",
+                example: "código-número (ej: 7-1234567)",
+            },
+        };
+
+        // Función para actualizar el formato del teléfono según el país
+        function actualizarFormatoTelefono() {
+            const countrySelect = document.getElementById("country");
+            const phoneInput = document.getElementById("phone");
+            const phoneHelp = document.getElementById("phoneHelp");
+
+            const selectedCountry = countrySelect.value;
+            const format = phoneFormats[selectedCountry] || phoneFormats["Mexico"];
+
+            
+            phoneInput.pattern = format.pattern;
+            phoneInput.placeholder = format.placeholder;
+
+            // Mantener el valor actual si existe
+            if (!phoneInput.value) {
+                phoneInput.value = "";
+            }
+
+            
+            phoneHelp.textContent = `Debe seguir el siguiente formato: ${format.example}`;
+        }
+
+        
+        document.getElementById("country").addEventListener("change", actualizarFormatoTelefono);
+
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            actualizarFormatoTelefono();
+
+            // Formato segun el pais
+            const currentCountry = "<?php echo $pais_valor; ?>";
+            if (currentCountry) {
+                const format = phoneFormats[currentCountry] || phoneFormats["Mexico"];
+                document.getElementById('phone').pattern = format.pattern;
+                document.getElementById('phone').placeholder = format.placeholder;
+                document.getElementById('phoneHelp').textContent = `Debe seguir el siguiente formato: ${format.example}`;
+            }
+        });
     </script>
 </body>
 
