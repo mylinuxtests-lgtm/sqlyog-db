@@ -10,7 +10,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 10px;
     padding: 20px;
-    background-image: url('uploads/documents/66184.jpg');
+    background-image: url('uploads/documents/909375.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -65,12 +65,13 @@ h2 {
 }
 
 .form-check {
+    color: #f0f0f0;
     max-width: 600px;
     margin: 10px auto;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0);
     border-radius: 1px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.745);
     text-align: justify;
 }
 

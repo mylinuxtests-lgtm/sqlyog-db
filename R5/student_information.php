@@ -95,6 +95,8 @@ if ($result->num_rows > 0) {
 
     echo "</table>";
 
+    echo "<div style='display: none;' id='timestamp-data'>" . $row['Fecha_Registro'] . "</div>";
+
     echo "<a href='students.php' class='btn'>
         <img src='./uploads/return-svgrepo-com.svg' width='80' alt='Volver a los resultados'>
         </a><br><br>";
@@ -116,6 +118,16 @@ $conn->close();
 </head>
 
 <body>
+
+    <script>
+        window.onload = function () {
+            const timestampData = document.getElementById('timestamp-data');
+            const timestampDisplay = document.getElementById('timestamp-display');
+            if (timestampData && timestampDisplay) {
+                timestampDisplay.textContent = timestampData.textContent;
+            }
+        };
+    </script>
 </body>
 
 </html>

@@ -22,8 +22,8 @@
       </div>
       <input
         type="hidden"
-        id="fecha_respuesta"
-        name="fecha_respuestas"
+        id="fecha_acceso"
+        name="fecha_acceso"
         value=""
       />
       <div class="form-box">
@@ -127,8 +127,8 @@
             <img
               src="uploads/documents/images.jpg"
               alt="Ejemplo"
-              width="100"
-              height="150"
+              width="150"
+              height="200S"
             />
           </div>
         </div>
@@ -200,7 +200,7 @@
       </div>
       <div class="col-12">
         <div class="form-check">
-          <label class="form-check-label" for="invalidCheck">
+          <label class="form-check-label" style="color:rgb(255, 255, 255);" for="invalidCheck">
             Confirmas que estas de acuerdo con los terminos y condiciones.
             <span class="error">*</span>
             <input
@@ -211,7 +211,7 @@
               required
             />
           </label>
-          <small>Debes aceptar antes de finalizar </small>
+          <small style="color:rgb(255, 255, 255);">Debes aceptar antes de finalizar </small>
         </div>
       </div>
       <input type="submit" value="Finalizar formulario" />
@@ -333,7 +333,7 @@
       document.addEventListener("DOMContentLoaded", function () {
         const now = new Date();
         const formattedDate = now.toISOString().slice(0, 19).replace("T", " ");
-        document.getElementById("fecha_respuesta").value = formattedDate;
+        document.getElementById("fecha_acceso").value = formattedDate;
       });
 
       document

@@ -137,7 +137,7 @@ $especifique_valor = $student['especifique'] ?? "";
                 </div>
                 <div class="photo-example">
                     <small>Foto actual:</small><br />
-                    <img src="<?php echo $student['foto']; ?>" alt="Foto actual" width="100" height="150" />
+                    <img src="<?php echo $student['foto']; ?>" alt="Foto actual" width="150" height="200" />
                 </div>
             </div>
         </div>
@@ -175,12 +175,12 @@ $especifique_valor = $student['especifique'] ?? "";
         </div>
         <div class="col-12">
             <div class="form-check">
-                <label class="form-check-label" for="invalidCheck">
+                <label class="form-check-label" style="color:rgb(255, 255, 255);" for="invalidCheck">
                     Confirmas que estas de acuerdo con los terminos y condiciones.
                     <span class="error">*</span>
                     <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required />
                 </label>
-                <small>Debes aceptar antes de finalizar </small>
+                <small style="color:rgb(255, 255, 255);">Debes aceptar antes de finalizar </small>
             </div>
         </div>
         <input type="submit" value="Actualizar información" />

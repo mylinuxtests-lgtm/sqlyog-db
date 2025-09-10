@@ -20,7 +20,7 @@ $pais = $conn->real_escape_string($_POST['country']);
 $telefono = $conn->real_escape_string($_POST['phone']);
 $correo = $conn->real_escape_string($_POST['correo']);
 $domicilio = $conn->real_escape_string($_POST['domicilio']);
-$fecha_registro = $conn->real_escape_string($_POST['fecha_respuestas']);
+$fecha_acceso = $conn->real_escape_string($_POST['fecha_acceso']);
 
 $id_sexo = 0;
 switch ($sexo) {
