@@ -220,6 +220,7 @@
     <br /><br />
 
     <script>
+      // Muestra el cuadro de texto si las condiciones se cumplen
       const radioOtro = document.getElementById("S3");
       const campoEspecifique = document.getElementById("especifique");
       const labelEspecifique = document.getElementById("labelOtro");
@@ -330,6 +331,7 @@
         phoneHelp.textContent = `Debe seguir el siguiente formato: ${format.example}`;
       }
 
+      // Registra el tiempo en el que el usuario accede al Forulario
       document.addEventListener("DOMContentLoaded", function () {
         const now = new Date();
         const formattedDate = now.toISOString().slice(0, 19).replace("T", " ");
