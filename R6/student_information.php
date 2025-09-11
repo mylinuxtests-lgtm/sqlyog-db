@@ -43,9 +43,14 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
 
-    echo "<h2>ID Seleccionada</h2>";
-    echo "<table>";
-    
+    echo "<div class='user-header'>";
+    echo "<h2>Detalles del Estudiante</h2>";
+    echo "<a href='students.php'>Volver a registros</a>";
+    echo "</div>";
+
+    echo "<div class='table-container'>";
+    echo "<table class='students-table'>";
+
     // Campos principales
     $fields = [
         'ID' => 'ID',
@@ -63,7 +68,7 @@ if ($result->num_rows > 0) {
     foreach ($fields as $key => $label) {
         echo "<tr>";
         echo "<td><strong>$label</strong></td>";
-        
+
         if ($key === 'Sexo') {
             if ($row['Sexo'] == 'Otro' && !empty($row['Especifique'])) {
                 echo "<td>" . htmlspecialchars($row['Sexo'] . " - " . $row['Especifique']) . "</td>";
@@ -79,30 +84,35 @@ if ($result->num_rows > 0) {
     // Archivos
     echo "<tr>";
     echo "<td><strong>Foto</strong></td>";
-    echo "<td><img src='./" . $row['Foto'] . "' width='120' height='150' style='object-fit: cover;'></td>";
+    echo "<td><img src='./" . $row['Foto'] . "' width='120' height='150' style='object-fit: cover; border-radius: 4px;'></td>";
     echo "</tr>";
 
     echo "<tr>";
     echo "<td><strong>Lista</strong></td>";
-    echo "<td><a href='./" . $row['Lista'] . "' download class='btn-table'>Descargar</a></td>";
+    echo "<td><a href='./" . $row['Lista'] . "' download class='action-btn'>Descargar Lista</a></td>";
     echo "</tr>";
 
     echo "<tr>";
     echo "<td><strong>Archivo Excel</strong></td>";
-    echo "<td><a href='./" . $row['Excel'] . "' class='btn-table'>Descargar</a></td>";
+    echo "<td><a href='./" . $row['Excel'] . "' class='action-btn'>Descargar Excel</a></td>";
     echo "</tr>";
 
     echo "</table>";
+    echo "</div>";
 
-    echo "<div class='hidden-timestamp' id='timestamp-data'>" . $row['Fecha_Registro'] . "</div>";
-
-    echo "<a href='students.php' class='btn-table'>
-        <img src='./templates/return-svgrepo-com.svg' width='80' alt='Volver a los registros'>
-        </a><br><br>";
+    echo "<div style='text-align: center; margin-top: 20px;'>";
+    echo "<a href='students.php' class='action-btn'>Volver a Estudiantes</a>";
+    echo "</div>";
 
 } else {
-    echo "ID incorrecta: $student_id";
-    echo "<br><a href='students.php' class='btn-table'>Volver a los registros</a>";
+    echo "<div class='user-header'>";
+    echo "<h2>Error</h2>";
+    echo "<a href='students.php'>Volver a estudiantes</a>";
+    echo "</div>";
+
+    echo "<div style='text-align: center; margin: 40px;'>";
+    echo "<p>ID incorrecta: $student_id</p>";
+    echo "</div>";
 }
 
 $conn->close();
@@ -119,15 +129,6 @@ $conn->close();
 </head>
 
 <body>
-    <script>
-        window.onload = function () {
-            const timestampData = document.getElementById('timestamp-data');
-            const timestampDisplay = document.getElementById('timestamp-display');
-            if (timestampData && timestampDisplay) {
-                timestampDisplay.textContent = timestampData.textContent;
-            }
-        };
-    </script>
 </body>
 
 </html>

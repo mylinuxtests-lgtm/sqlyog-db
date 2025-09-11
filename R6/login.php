@@ -8,12 +8,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'logout') {
     exit();
 }
 
-
 if (isset($_SESSION["usuario"])) {
     header("Location: students.php");
     exit();
 }
-
 
 require_once 'conn.php';
 
@@ -56,10 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"])) {
                 header("Location: students.php");
                 exit();
             } else {
-                $error = "Informacion incorrecta, compruebe los datos.";
+                $error = "Los datos son incorrectos.";
             }
         } else {
-            $error = "Informacion incorrecta, compruebe los datos.";
+            $error = "Los datos son incorrectos.";
         }
 
         $stmt->close();
@@ -90,15 +88,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"])) {
             <div class="login-error"><?php echo $error; ?></div>
         <?php endif; ?>
 
-        <form action="login.php" method="post">
+        <form action="login.php" method="post" autocomplete="off">
             <div class="form-group">
                 <label for="usuario">Usuario:</label>
-                <input type="text" id="usuario" name="usuario" required
+                <input type="text" id="usuario" name="usuario" required autocomplete="off"
                     value="<?php echo isset($usuario) ? htmlspecialchars($usuario) : ''; ?>">
             </div>
             <div class="form-group">
                 <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required autocomplete="off">
             </div>
             <div class="form-group">
                 <input type="submit" value="Ingresar">
