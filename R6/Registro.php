@@ -158,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <span class="radio-text">Femenino</span> </label><br />
 
                 <label class="radio-label">
-                    <input type="radio" id="S3" name"sexo" value="Otro" />
+                    <input type="radio" id="S3" name="sexo" value="Otro" />
                     <span class="radio-text">Otro</span> </label><br />
 
                 <label id="labelOtro" for="especifique" class="oculto">
@@ -255,14 +255,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="submit" value="Registrar">
                 <input type="reset" value="Restablecer">
             </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="students.php" class="form-group">Ver estudiantes registrados</a>
-            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="students.php" class="btn-students">Ver estudiantes registrados</a>
+        </div>
     </div>
-    </form>
-
-
-
 
     <script>
         // Mostrar campo de especificación cuando se selecciona "Otro"
