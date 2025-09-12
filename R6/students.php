@@ -56,6 +56,7 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar) {
 
   $export_result = $conn->query($export_sql);
 
+  // Nombre del archivo
   if ($export_result->num_rows > 0) {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=registros_estudiantes_' . date('Y-m-d') . '.csv');
@@ -95,6 +96,23 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar) {
   }
 }
 
+// Procesar búsqueda
+$search_query = isset($_GET['search_query']) ? trim($_GET['search_query']) : '';
+$where_condition = "WHERE s.visible = 1";
+
+// Buscar en los campos
+if (!empty($search_query)) {
+  $sanitized_query = $conn->real_escape_string($search_query);
+  $where_condition .= " AND (s.nombre LIKE '%$sanitized_query%' OR 
+                            sex.descripcion LIKE '%$sanitized_query%' OR 
+                            s.especifique LIKE '%$sanitized_query%' OR 
+                            s.edad LIKE '%$sanitized_query%' OR 
+                            p.pais LIKE '%$sanitized_query%' OR 
+                            s.telefono LIKE '%$sanitized_query%' OR 
+                            s.correo LIKE '%$sanitized_query%' OR 
+                            s.domicilio LIKE '%$sanitized_query%')";
+}
+
 // Extrae la informacion de la base de datos
 $sql = "
 SELECT
@@ -103,11 +121,15 @@ SELECT
   DATE_FORMAT(s.fecha_registro, '%d-%m-%Y %H:%i') AS Fecha_Registro,
   DATE_FORMAT(s.fecha_edicion, '%d-%m-%Y %H:%i') AS Fecha_Edicion
 FROM student s
-WHERE s.visible = 1
+JOIN sexo sex ON s.id_sexo = sex.id_sexo
+JOIN paises p ON s.id_paises = p.id_paises
+$where_condition
+ORDER BY s.id_students
 ";
 
 $result = $conn->query($sql);
 
+// Crea r un nuevo registro
 if ($result->num_rows > 0) {
   echo "<div class='user-header'>";
   echo "<h2>Usuario: <strong>" . htmlspecialchars($_SESSION["usuario"]) . "</strong></h2>";
@@ -118,10 +140,30 @@ if ($result->num_rows > 0) {
   echo "<a href='Registro.php' class='new-student-btn'>Registrar nuevo estudiante</a>";
 
   if ($permiso_exportar) {
-    echo "<a href='students.php?export=csv' class='export-csv-btn'>Exportar a CSV</a>";
+    echo "<a href='students.php?export=csv" . (!empty($search_query) ? "&search_query=" . urlencode($search_query) : "") . "' class='export-csv-btn'>Exportar a CSV</a>";
   }
 
+  // Formulario de búsqueda
+  echo "<div class='search-container'>";
+  echo "<form action='students.php' method='GET' class='search-form'>";
+  echo "<input type='text' name='search_query' placeholder='Buscar en registros' value='" . htmlspecialchars($search_query) . "'>";
+  echo "<button type='submit'>Buscar</button>";
+
+  if (!empty($search_query)) {
+    echo "<a href='students.php'>Limpiar</a>";
+  }
+  
+  echo "</form>";
   echo "</div>";
+  
+  echo "</div>";
+
+  // Resultados de búsqueda
+  if (!empty($search_query)) {
+    echo "<div style='text-align: center; margin: 10px 0;'>";
+    echo "<p>Mostrando resultados para: <strong>" . htmlspecialchars($search_query) . "</strong></p>";
+    echo "</div>";
+  }
 
   echo "<div class='table-container'>";
   echo "<table class='students-table'>";
@@ -138,17 +180,22 @@ if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
     echo "<tr>";
     echo "<td>" . $row['ID'] . "</td>";
-    echo "<td>" . htmlspecialchars($row['Nombre']) . "</td>";
+    
+    if (!empty($search_query)) {
+      $highlighted_name = preg_replace("/(" . preg_quote($search_query, '/') . ")/i", "<mark>$1</mark>", htmlspecialchars($row['Nombre']));
+      echo "<td>" . $highlighted_name . "</td>";
+    } else {
+      echo "<td>" . htmlspecialchars($row['Nombre']) . "</td>";
+    }
+    
     echo "<td>" . $row['Fecha_Registro'] . "</td>";
     echo "<td>" . ($row['Fecha_Edicion'] ? $row['Fecha_Edicion'] : '') . "</td>";
-
 
     echo "<td>
             <a href='student_information.php?id=" . $row['ID'] . "' class='btn-table'>
                 <img src='./templates/magnifying.png' width='30' alt='Ver detalles' title='Ver detalles'>
             </a>
           </td>";
-
 
     if ($permiso_editar) {
       echo "<td>
@@ -163,7 +210,6 @@ if ($result->num_rows > 0) {
                 </span>
               </td>";
     }
-
 
     if ($permiso_borrar) {
       echo "<td>
@@ -190,7 +236,15 @@ if ($result->num_rows > 0) {
   echo "</div>";
 
   echo "<div style='text-align: center; margin: 40px;'>";
-  echo "<p>No se encontraron resultados.</p>";
+
+  // En caso de que no existan resultados similares
+  if (!empty($search_query)) {
+    echo "<p>No se encontraron resultados para: <strong>" . htmlspecialchars($search_query) . "</strong></p>";
+    echo "<a href='students.php'>Ver todos los registros</a><br><br>";
+  } else {
+    echo "<p>No se encontraron resultados.</p>";
+  }
+  
   echo "<a href='Registro.php' class='new-student-btn'>Registrar nuevo estudiante</a>";
   echo "</div>";
 }
@@ -206,24 +260,6 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css" media="screen" />
   <title>Base de datos de Estudiantes</title>
-  <style>
-    .export-csv-btn {
-      background-color: #274472;
-      color: white;
-      padding: 12px 20px;
-      text-decoration: none;
-      border-radius: 4px;
-      display: inline-block;
-      margin-left: 15px;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-
-    .export-csv-btn:hover {
-      background-color: #1a3152;
-      color: white;
-    }
-  </style>
 </head>
 
 <body>

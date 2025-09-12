@@ -2,10 +2,6 @@
     display: none;
 }
 
-#nombre {
-    width: 300px;
-}
-
 body {
     font-family: Arial, sans-serif;
     margin: 10px;
@@ -16,7 +12,6 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
-
 
 .form-container {
     max-width: 600px;
@@ -79,18 +74,13 @@ h2 {
     margin-bottom: 15px;
 }
 
-p {
-    font-size: 18px;
-    line-height: 1.6;
-}
-
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-radio-label {
+.radio-label {
     display: inline-flex;
     align-items: center;
     cursor: pointer;
@@ -154,7 +144,6 @@ input[type="reset"]:hover {
     margin-bottom: 15px;
     font-size: medium;
 }
-
 
 .login-container {
     max-width: 400px;
@@ -225,13 +214,6 @@ input[type="reset"]:hover {
     border-radius: 4px;
 }
 
-.logout-info {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #337ab7;
-}
-
-
 .confirmation-container {
     max-width: 500px;
     margin: 50px auto;
@@ -275,7 +257,6 @@ input[type="reset"]:hover {
     opacity: 0.8;
 }
 
-
 table {
     padding: 5px;
     font-family: arial, sans-serif;
@@ -307,40 +288,6 @@ tr:nth-child(even) {
     background-color: rgba(220, 220, 220, 0.9);
 }
 
-.timestamp {
-    background-color: #f0f0f0;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
-    text-align: center;
-    font-family: monospace;
-}
-
-.hidden-timestamp {
-    display: none;
-}
-
-a {
-    background-color: transparent;
-    text-decoration: none;
-}
-
-h2 {
-    background-color: rgba(0, 0, 0, 0);
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-}
-
-.btn-table {
-    background-color: transparent;
-    padding: 1px;
-    border-radius: 3px;
-    text-decoration: none;
-    color: #000;
-}
-
-
 .error-message {
     color: red;
     padding: 10px;
@@ -350,17 +297,6 @@ h2 {
     border-radius: 4px;
     text-align: center;
 }
-
-.login-container input[type="text"],
-.login-container input[type="password"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #fff;
-}
-
 
 .user-header {
     max-width: 600px;
@@ -381,7 +317,6 @@ h2 {
     color: #337ab7;
     text-decoration: none;
 }
-
 
 .new-student-btn {
     background-color: #4CAF50;
@@ -411,7 +346,6 @@ h2 {
 
 .students-table th {
     background-color: #274472;
-
     color: white;
     padding: 12px;
     text-align: center;
@@ -427,7 +361,6 @@ h2 {
 
 .students-table tr:nth-child(even) {
     background-color: #c3e0e5;
-
 }
 
 .students-table tr:nth-child(odd) {
@@ -436,7 +369,6 @@ h2 {
 
 .students-table tr:hover {
     background-color: #5885af;
-
     color: white;
 }
 
@@ -454,13 +386,11 @@ h2 {
     text-decoration: underline;
 }
 
-
 .action-btn {
     display: inline-block;
     padding: 6px 12px;
     margin: 2px;
     background-color: #41729f;
-
     color: white;
     border-radius: 4px;
     text-decoration: none;
@@ -469,132 +399,77 @@ h2 {
 
 .action-btn:hover {
     background-color: #274472;
-
     text-decoration: none;
     color: white;
 }
 
-
-.user-header {
-    text-align: center;
-    padding: 15px;
-    margin-bottom: 20px;
-    background-color: #c3e0e5;
-
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.user-header h2 {
-    color: #274472;
-
-    font-size: 22px;
-    margin: 0 0 10px 0;
-}
-
-.user-header a {
-    color: #41729f;
-
+.btn-table {
+    background-color: transparent;
+    padding: 1px;
+    border-radius: 3px;
     text-decoration: none;
-    font-weight: bold;
+    color: #000;
 }
 
-.user-header a:hover {
-    text-decoration: underline;
-}
-
-
-.new-student-btn {
-    background-color: #41729f;
-
+.export-csv-btn {
+    background-color: #274472;
     color: white;
     padding: 12px 20px;
     text-decoration: none;
     border-radius: 4px;
     display: inline-block;
-    margin-bottom: 20px;
+    margin-left: 15px;
     font-weight: bold;
     transition: background-color 0.3s;
 }
 
-.new-student-btn:hover {
-    background-color: #274472;
-
+.export-csv-btn:hover {
+    background-color: #1a3152;
     color: white;
 }
 
-
-.info-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
-}
-
-.info-table th {
-    background-color: #274472;
-
-    color: white;
-    padding: 12px;
-    text-align: left;
+mark {
+    background-color: yellow;
     font-weight: bold;
-    border: 1px solid #41729f;
-    width: 30%;
 }
 
-.info-table td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #c3e0e5;
-    background-color: #ffffff;
-}
-
-.info-table tr:nth-child(even) td {
-    background-color: #c3e0e5;
-
-}
-
-.info-table tr:hover td {
-    background-color: #5885af;
-
-    color: white;
-}
-
-
-.info-table .action-btn {
+.search-container {
     display: inline-block;
-    padding: 8px 16px;
-    background-color: #41729f;
+    margin-left: 15px;
+}
 
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5px;
+    width: 250px;
+}
+
+.search-form button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
     color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-form a {
+    padding: 10px 15px;
+    margin-left: 5px;
+    background-color: #f44336;
+    color: white;
+    border: none;
     border-radius: 4px;
     text-decoration: none;
-    transition: background-color 0.3s;
-}
-
-.info-table .action-btn:hover {
-    background-color: #274472;
-
-    color: white;
-}
-
-
-.students-table .btn-table {
     display: inline-block;
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
 }
-
-.students-table .btn-table:hover {
-    background-color: #5885af;
-}
-
-.students-table .btn-table img {
-    vertical-align: middle;
-}
-
 
 @media (max-width: 768px) {
     .table-container {
@@ -615,118 +490,3 @@ h2 {
         height: 24px;
     }
 }
-
-
-.user-header {
-    text-align: center;
-    padding: 15px;
-    margin-bottom: 20px;
-    background-color: #e8f4f8;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.user-header h2 {
-    color: #274472;
-    font-size: 22px;
-    margin: 0;
-    font-weight: bold;
-}
-
-
-.form-buttons-container {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-    flex-wrap: wrap;
-}
-
-.form-buttons-container input[type="submit"],
-.form-buttons-container input[type="reset"],
-.form-buttons-container .btn-cancel {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    text-decoration: none;
-    text-align: center;
-    min-width: 180px;
-}
-
-
-.btn-cancel {
-    background-color: #6c757d;
-    color: white;
-    display: inline-block;
-    line-height: normal;
-}
-
-.btn-cancel:hover {
-    background-color: #5a6268;
-    color: white;
-}
-
-
-@media (max-width: 768px) {
-    .form-buttons-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .form-buttons-container input[type="submit"],
-    .form-buttons-container input[type="reset"],
-    .form-buttons-container .btn-cancel {
-        width: 100%;
-        max-width: 300px;
-    }
-}
-
-
-.export-csv-btn {
-    background-color: #274472;
-    color: white;
-    padding: 12px 20px;
-    text-decoration: none;
-    border-radius: 4px;
-    display: inline-block;
-    margin-left: 15px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.export-csv-btn:hover {
-    background-color: #1a3152;
-    color: white;
-}
-
-
-.student-info-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.student-info-actions .action-btn,
-.student-info-actions .export-csv-btn {
-    margin: 0;
-}
-
-        .export-csv-btn {
-            background-color: #274472;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-            margin-left: 15px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .export-csv-btn:hover {
-            background-color: #1a3152;
-            color: white;
-        }
