@@ -12,8 +12,15 @@ if ($conn->connect_error) {
 
 $action = isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : '');
 
+$id_usuario = $_SESSION["id_perfil"] ?? 0;
+$permiso_editar = ($id_usuario == 1 || $id_usuario == 2);
+$permiso_borrar = ($id_usuario == 1);
+
 // Eliminación de registro
 if ($action == 'eliminar') {
+    if (!$permiso_borrar) {
+        die("No tienes permisos para eliminar registros.");
+    }
     $student_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
     if ($student_id <= 0) {
@@ -63,6 +70,9 @@ if ($action == 'eliminar') {
 
 // Procesar actualización de registro
 elseif ($action == 'actualizar') {
+    if (!$permiso_editar) {
+        die("No tienes permisos para editar registros.");
+    }
     // Obtener el ID del estudiante
     $student_id = intval($_POST['id']);
 

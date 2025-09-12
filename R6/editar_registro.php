@@ -1,4 +1,14 @@
 <?php
+session_start();
+
+$id_usuario = $_SESSION["id_perfil"] ?? 0;
+$permiso_editar = ($id_usuario == 1 || $id_usuario == 2);
+
+if (!$permiso_editar) {
+    die("No tienes permisos para editar registros.");
+}
+
+require_once 'conn.php';
 require_once 'conn.php';
 
 $conn = new mysqli($servername, $username, $db_password, $dbname, $port);
@@ -61,7 +71,7 @@ $especifique_valor = $student['especifique'] ?? "";
 
 <body>
     <?php
-    session_start();
+    
     $usuario_actual = isset($_SESSION["usuario"]) ? htmlspecialchars($_SESSION["usuario"]) : 'Usuario';
     ?>
 

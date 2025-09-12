@@ -33,8 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"])) {
         }
 
         // Verificar credenciales en la base de datos
-        $stmt = $conn->prepare("SELECT l.id_usuario, l.nombre_usuario, l.contraseña, l.id_perfil, p.perfil 
-                               FROM login l 
+        $stmt = $conn->prepare("SELECT l.id_usuario, l.nombre_usuario, l.contrasena, l.id_perfil, p.perfil 
+                               FROM id_usuario l 
                                JOIN id_perfil p ON l.id_perfil = p.id_perfil 
                                WHERE l.nombre_usuario = ?");
         $stmt->bind_param("s", $usuario);
@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"])) {
             $row = $result->fetch_assoc();
 
             // Verificar contraseña
-            if ($password_form === $row['contraseña']) {
+            if ($password_form === $row['contrasena']) {
                 $_SESSION["usuario"] = $row['nombre_usuario'];
                 $_SESSION["id_usuario"] = $row['id_usuario'];
                 $_SESSION["id_perfil"] = $row['id_perfil'];
