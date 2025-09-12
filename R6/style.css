@@ -713,3 +713,20 @@ h2 {
 .student-info-actions .export-csv-btn {
     margin: 0;
 }
+
+        .export-csv-btn {
+            background-color: #274472;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 15px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .export-csv-btn:hover {
+            background-color: #1a3152;
+            color: white;
+        }

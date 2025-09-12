@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION["usuario"])) {
   header("Location: login.php");
   exit();
@@ -25,27 +24,67 @@ $permiso_exportar = ($id_usuario == 1 || $id_usuario == 2);
 
 // Exportar CSV
 if (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar) {
-  // Obtener todos los datos de estudiantes
+  // Obtener los datos
   $export_sql = "
     SELECT
-      s.id_students   AS ID,
-      s.nombre        AS Nombre,
+      s.id_students AS ID,
+      s.nombre AS Nombre,
+      sex.descripcion AS Sexo,
+      s.especifique AS Especifique,
+      s.edad AS Edad,
+      DATE_FORMAT(s.nacimiento, '%d-%m-%Y') AS Fecha_Nacimiento,
+      p.pais AS Pais,
+      s.telefono AS Telefono,
+      s.correo AS Correo,
+      s.domicilio AS Domicilio,
+      s.foto AS Foto,
+      s.lista AS Lista,
+      s.excel AS Excel,
       DATE_FORMAT(s.fecha_registro, '%d-%m-%Y %H:%i') AS Fecha_Registro,
-      DATE_FORMAT(s.fecha_edicion, '%d-%m-%Y %H:%i') AS Fecha_Edicion
+      DATE_FORMAT(s.fecha_edicion, '%d-%m-%Y %H:%i') AS Fecha_Edicion,
+      DATE_FORMAT(s.fecha_acceso, '%d-%m-%Y %H:%i') AS Fecha_Acceso,
+      s.id_usuario_registro AS ID_Usuario_Registro,
+      s.id_usuario_editor AS ID_Usuario_Editor,
+      s.visible AS Visible,
+      DATE_FORMAT(s.fecha_borrado, '%d-%m-%Y %H:%i') AS Fecha_Borrado,
+      s.id_usuario_borrador AS ID_Usuario_Borrador
     FROM student s
+    JOIN sexo sex ON s.id_sexo = sex.id_sexo
+    JOIN paises p ON s.id_paises = p.id_paises
     WHERE s.visible = 1
     ";
 
   $export_result = $conn->query($export_sql);
 
   if ($export_result->num_rows > 0) {
-
     header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=estudiantes_' . date('Y-m-d') . '.csv');
+    header('Content-Disposition: attachment; filename=registros_estudiantes_' . date('Y-m-d') . '.csv');
 
     $output = fopen('php://output', 'w');
 
-    fputcsv($output, array('ID', 'Nombre', 'Fecha Registro', 'Fecha Edición'));
+    fputcsv($output, array(
+      'ID',
+      'Nombre',
+      'Sexo',
+      'Especifique',
+      'Edad',
+      'Fecha_Nacimiento',
+      'Pais',
+      'Telefono',
+      'Correo',
+      'Domicilio',
+      'Foto',
+      'Lista',
+      'Excel',
+      'Fecha_Registro',
+      'Fecha_Edicion',
+      'Fecha_Acceso',
+      'ID_Usuario_Registro',
+      'ID_Usuario_Editor',
+      'Visible',
+      'Fecha_Borrado',
+      'ID_Usuario_Borrador'
+    ));
 
     while ($row = $export_result->fetch_assoc()) {
       fputcsv($output, $row);

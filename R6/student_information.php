@@ -48,6 +48,7 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar) {
 
     if ($export_result->num_rows > 0) {
 
+        // Nombre del archivo
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=estudiante_' . $student_id . '_' . date('Y-m-d') . '.csv');
 
@@ -201,24 +202,6 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css" media="screen" />
     <title>Detalles del Estudiante</title>
-    <style>
-        .export-csv-btn {
-            background-color: #274472;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 4px;
-            display: inline-block;
-            margin-left: 15px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-
-        .export-csv-btn:hover {
-            background-color: #1a3152;
-            color: white;
-        }
-    </style>
 </head>
 
 <body>
