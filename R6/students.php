@@ -100,7 +100,7 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar) {
 $search_query = isset($_GET['search_query']) ? trim($_GET['search_query']) : '';
 $where_condition = "WHERE s.visible = 1";
 
-// Buscar en los campos
+// Buscar informacion en llos campos
 if (!empty($search_query)) {
   $sanitized_query = $conn->real_escape_string($search_query);
   $where_condition .= " AND (s.nombre LIKE '%$sanitized_query%' OR 
@@ -152,16 +152,16 @@ if ($result->num_rows > 0) {
   if (!empty($search_query)) {
     echo "<a href='students.php'>Limpiar</a>";
   }
-  
+
   echo "</form>";
   echo "</div>";
-  
+
   echo "</div>";
 
   // Resultados de búsqueda
   if (!empty($search_query)) {
     echo "<div style='text-align: center; margin: 10px 0;'>";
-    echo "<p>Mostrando resultados para: <strong>" . htmlspecialchars($search_query) . "</strong></p>";
+    echo "<p>Mostrando resultados similares a: <strong>" . htmlspecialchars($search_query) . "</strong></p>";
     echo "</div>";
   }
 
@@ -180,14 +180,14 @@ if ($result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
     echo "<tr>";
     echo "<td>" . $row['ID'] . "</td>";
-    
+    // Resalta las coincidencias que sean visibles
     if (!empty($search_query)) {
       $highlighted_name = preg_replace("/(" . preg_quote($search_query, '/') . ")/i", "<mark>$1</mark>", htmlspecialchars($row['Nombre']));
       echo "<td>" . $highlighted_name . "</td>";
     } else {
       echo "<td>" . htmlspecialchars($row['Nombre']) . "</td>";
     }
-    
+
     echo "<td>" . $row['Fecha_Registro'] . "</td>";
     echo "<td>" . ($row['Fecha_Edicion'] ? $row['Fecha_Edicion'] : '') . "</td>";
 
@@ -244,14 +244,13 @@ if ($result->num_rows > 0) {
   } else {
     echo "<p>No se encontraron resultados.</p>";
   }
-  
+
   echo "<a href='Registro.php' class='new-student-btn'>Registrar nuevo estudiante</a>";
   echo "</div>";
 }
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 

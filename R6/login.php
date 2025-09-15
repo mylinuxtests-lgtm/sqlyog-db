@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"])) {
             die("Error en la conexión: " . $conn->connect_error);
         }
 
-        // Verificar credenciales en la base de datos
+        // Verificar credenciales
         $stmt = $conn->prepare("SELECT l.id_usuario, l.nombre_usuario, l.contrasena, l.id_perfil, p.perfil 
                                FROM id_usuario l 
                                JOIN id_perfil p ON l.id_perfil = p.id_perfil 
@@ -44,7 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"])) {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
 
-            // Verificar contraseña
             if ($password_form === $row['contrasena']) {
                 $_SESSION["usuario"] = $row['nombre_usuario'];
                 $_SESSION["id_usuario"] = $row['id_usuario'];

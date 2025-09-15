@@ -9,7 +9,6 @@ if (!$permiso_editar) {
 }
 
 require_once 'conn.php';
-require_once 'conn.php';
 
 $conn = new mysqli($servername, $username, $db_password, $dbname, $port);
 $conn->set_charset("utf8mb4");
@@ -71,7 +70,6 @@ $especifique_valor = $student['especifique'] ?? "";
 
 <body>
     <?php
-    
     $usuario_actual = isset($_SESSION["usuario"]) ? htmlspecialchars($_SESSION["usuario"]) : 'Usuario';
     ?>
 
@@ -203,9 +201,9 @@ $especifique_valor = $student['especifique'] ?? "";
             </div>
         </div>
         <div style="text-align: center; margin-top: 20px;">
-        <input type="submit" value="Actualizar información" />
-        <input type="reset" value="Restablecer cambios" />
-        <a href="students.php" class="form-group">Cancelar edición</a>
+            <input type="submit" value="Actualizar información" />
+            <input type="reset" value="Restablecer cambios" />
+            <a href="students.php" class="form-group">Cancelar edición</a>
         </div>
     </form>
     <br /><br />
@@ -306,52 +304,32 @@ $especifique_valor = $student['especifique'] ?? "";
             Rusia: {
                 pattern: "[0-9]{3}-[0-9]{10}",
                 placeholder: "7-1234567",
-                example: "código-número (ej: 7-1234567)",
+                example: "código de área-número (ej: 7-1234567)",
             },
         };
 
-        // Función para actualizar el formato del teléfono según el país
         function actualizarFormatoTelefono() {
             const countrySelect = document.getElementById("country");
             const phoneInput = document.getElementById("phone");
             const phoneHelp = document.getElementById("phoneHelp");
 
             const selectedCountry = countrySelect.value;
-            const format = phoneFormats[selectedCountry] || phoneFormats["Mexico"];
+            const format = phoneFormats[selectedCountry];
 
-
-            phoneInput.pattern = format.pattern;
-            phoneInput.placeholder = format.placeholder;
-
-            // Mantener el valor actual si existe
-            if (!phoneInput.value) {
-                phoneInput.value = "";
+            if (format) {
+                phoneInput.pattern = format.pattern;
+                phoneInput.placeholder = format.placeholder;
+                phoneHelp.textContent = `Debe seguir el siguiente formato: ${format.example}`;
+            } else {
+                phoneInput.pattern = "[0-9]{3}-[0-9]{7,11}";
+                phoneInput.placeholder = "000-00000000";
+                phoneHelp.textContent = "Debe seguir el siguiente formato: extensión-número (ej: 473-1234567)";
             }
-
-
-            phoneHelp.textContent = `Debe seguir el siguiente formato: ${format.example}`;
         }
 
-
-        document.getElementById("country").addEventListener("change", actualizarFormatoTelefono);
-
-
-        document.addEventListener("DOMContentLoaded", function () {
-            actualizarFormatoTelefono();
-
-            // Formato segun el pais
-            const currentCountry = "<?php echo $pais_valor; ?>";
-            if (currentCountry) {
-                const format = phoneFormats[currentCountry] || phoneFormats["Mexico"];
-                document.getElementById('phone').pattern = format.pattern;
-                document.getElementById('phone').placeholder = format.placeholder;
-                document.getElementById('phoneHelp').textContent = `Debe seguir el siguiente formato: ${format.example}`;
-            }
-        });
+        // Inicializar formato
+        actualizarFormatoTelefono();
     </script>
 </body>
 
 </html>
-<?php
-$conn->close();
-?>

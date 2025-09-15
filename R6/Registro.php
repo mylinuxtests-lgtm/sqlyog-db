@@ -21,10 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener datos del formulario
     $nombre = $conn->real_escape_string($_POST['nombre']);
     $sexo = $conn->real_escape_string($_POST['sexo']);
-    $especifique = "";
-    if ($sexo == 'Otro' && isset($_POST['especifique'])) {
-        $especifique = $conn->real_escape_string($_POST['especifique']);
-    }
+    $especifique = ($sexo == 'Otro' && isset($_POST['especifique'])) ? $conn->real_escape_string($_POST['especifique']) : "";
     $edad = intval($_POST['age']);
     $nacimiento = $conn->real_escape_string($_POST['bday']);
     $pais = $conn->real_escape_string($_POST['country']);
@@ -33,21 +30,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $domicilio = $conn->real_escape_string($_POST['domicilio']);
 
     // Relacionar sexo a ID
-    $id_sexo = 0;
-    switch ($sexo) {
-        case 'Masculino':
-            $id_sexo = 1;
-            break;
-        case 'Femenino':
-            $id_sexo = 2;
-            break;
-        case 'Otro':
-            $id_sexo = 3;
-            break;
-    }
+    $id_sexo = match ($sexo) {
+        'Masculino' => 1,
+        'Femenino' => 2,
+        'Otro' => 3,
+        default => 1
+    };
 
     // Relacionar país a ID
-    $id_paises = 0;
     $paises_map = [
         'Alemania' => 1,
         'Brazil' => 2,
@@ -68,36 +58,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mkdir($upload_dir, 0755, true);
     }
 
-    $foto_path = "";
-    $lista_path = "";
-    $excel_path = "";
+    $foto_path = $lista_path = $excel_path = "";
 
-    // Procesar foto
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-        $foto_ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
-        $foto_name = "foto_" . time() . "." . $foto_ext;
-        move_uploaded_file($_FILES['photo']['tmp_name'], $upload_dir . $foto_name);
-        $foto_path = $upload_dir . $foto_name;
-    }
+    // Procesar archivos subidos
+    $archivos = [
+        'photo' => ['prefix' => 'foto', 'required' => true],
+        'list' => ['prefix' => 'lista', 'required' => true],
+        'excel' => ['prefix' => 'excel', 'required' => true]
+    ];
 
-    // Procesar lista
-    if (isset($_FILES['list']) && $_FILES['list']['error'] == 0) {
-        $lista_ext = pathinfo($_FILES['list']['name'], PATHINFO_EXTENSION);
-        $lista_name = "lista_" . time() . "." . $lista_ext;
-        move_uploaded_file($_FILES['list']['tmp_name'], $upload_dir . $lista_name);
-        $lista_path = $upload_dir . $lista_name;
-    }
-
-    // Procesar excel
-    if (isset($_FILES['excel']) && $_FILES['excel']['error'] == 0) {
-        $excel_ext = pathinfo($_FILES['excel']['name'], PATHINFO_EXTENSION);
-        $excel_name = "excel_" . time() . "." . $excel_ext;
-        move_uploaded_file($_FILES['excel']['tmp_name'], $upload_dir . $excel_name);
-        $excel_path = $upload_dir . $excel_name;
+    foreach ($archivos as $fileInput => $config) {
+        if (isset($_FILES[$fileInput]) && $_FILES[$fileInput]['error'] == 0) {
+            $ext = pathinfo($_FILES[$fileInput]['name'], PATHINFO_EXTENSION);
+            $name = "{$config['prefix']}_" . time() . ".$ext";
+            move_uploaded_file($_FILES[$fileInput]['tmp_name'], $upload_dir . $name);
+            ${$config['prefix'] . '_path'} = $upload_dir . $name;
+        }
     }
 
     // Insertar en la base de datos
-    $id_usuario_registro = isset($_SESSION["id_usuario"]) ? $_SESSION["id_usuario"] : null;
+    $id_usuario_registro = $_SESSION["id_usuario"] ?? null;
     $sql = "INSERT INTO student (nombre, id_sexo, especifique, edad, nacimiento, id_paises, telefono, correo, domicilio, foto, lista, excel, fecha_registro, id_usuario_registro, visible) 
             VALUES ('$nombre', $id_sexo, '$especifique', $edad, '$nacimiento', $id_paises, '$telefono', '$correo', '$domicilio', '$foto_path', '$lista_path', '$excel_path', NOW(), $id_usuario_registro, 1)";
 
@@ -105,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: students.php");
         exit();
     } else {
-        $error_message = "Error: " . $sql . "<br>" . $conn->error;
+        $error_message = "Error: " . $conn->error;
     }
 
     $conn->close();
@@ -161,9 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="radio" id="S3" name="sexo" value="Otro" />
                     <span class="radio-text">Otro</span> </label><br />
 
-                <label id="labelOtro" for="especifique" class="oculto">
-                    Especifique:
-                </label>
+                <label id="labelOtro" for="especifique" class="oculto">Especifique:</label>
                 <input type="text" class="oculto" id="especifique" name="especifique" /><br />
             </div>
 
@@ -219,8 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="form-box">
                 <label for="correo"> Correo: <span class="error">*</span><br /></label>
-                <input type="email" id="correo" name="correo" placeholder="ejemplo@hotmail.com" aria-label="correo"
-                    aria-describedby="basic-addon1" required /><br /><br />
+                <input type="email" id="correo" name="correo" placeholder="ejemplo@hotmail.com" required /><br /><br />
             </div>
 
             <div class="form-box">
@@ -284,77 +261,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Validación del formulario
         (function () {
             "use strict";
-
             const forms = document.querySelectorAll(".needs-validation");
 
             Array.from(forms).forEach(function (form) {
-                form.addEventListener(
-                    "submit",
-                    function (event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-
-                        form.classList.add("was-validated");
-                    },
-                    false
-                );
+                form.addEventListener("submit", function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add("was-validated");
+                }, false);
             });
         })();
 
         // Formatos de teléfono por país
         const phoneFormats = {
-            Alemania: {
-                pattern: "[0-9]{2}-[0-9]{6,13}",
-                placeholder: "49-12345678",
-                example: "Código de área-número (ex: 49-12345678)",
-            },
-            Brazil: {
-                pattern: "[0-9]{2}-[0-9]{10}",
-                placeholder: "55-912345678",
-                example: "Código de área-número (ex: 55-912345678)",
-            },
-            Canada: {
-                pattern: "[0-9]{1}-[0-9]{10}",
-                placeholder: "1-1234567",
-                example: "Código de área-número (ex: 1-1234567)",
-            },
-            China: {
-                pattern: "[0-9]{2}-[0-9]{5,12}",
-                placeholder: "86-12345678",
-                example: "Código de área-número (ex: 86-12345678)",
-            },
-            "Estados Unidos": {
-                pattern: "[0-9]{1}-[0-9]{10}",
-                placeholder: "1-5550123",
-                example: "Código de área-número (ex: 1-5550123)",
-            },
-            India: {
-                pattern: "[0-9]{2}-[0-9]{7,10}",
-                placeholder: "91-23456789",
-                example: "Código STD-número (ex: 91-23456789)",
-            },
-            Indonesia: {
-                pattern: "[0-9]{2}-[0-9]{5,10}",
-                placeholder: "62-12345678",
-                example: "Código de área-número (ex: 62-1234567)",
-            },
-            Japon: {
-                pattern: "[0-9]{2}-[0-9]{5,13}",
-                placeholder: "81-12345678",
-                example: "Código de área-número (ex: 81-12345678)",
-            },
-            Mexico: {
-                pattern: "[0-9]{2}-[0-9]{10}",
-                placeholder: "52-12345678",
-                example: "Lada-número (ex: 52-12345678)",
-            },
-            Rusia: {
-                pattern: "[0-9]{1}-[0-9]{10}",
-                placeholder: "7-1234567",
-                example: "Código-número (ex: 7-1234567)",
-            },
+            Alemania: { pattern: "[0-9]{2}-[0-9]{6,13}", placeholder: "49-12345678", example: "Código de área-número (ex: 49-12345678)" },
+            Brazil: { pattern: "[0-9]{2}-[0-9]{10}", placeholder: "55-912345678", example: "Código de área-número (ex: 55-912345678)" },
+            Canada: { pattern: "[0-9]{1}-[0-9]{10}", placeholder: "1-1234567", example: "Código de área-número (ex: 1-1234567)" },
+            China: { pattern: "[0-9]{2}-[0-9]{5,12}", placeholder: "86-12345678", example: "Código de área-número (ex: 86-12345678)" },
+            "Estados Unidos": { pattern: "[0-9]{1}-[0-9]{10}", placeholder: "1-5550123", example: "Código de área-número (ex: 1-5550123)" },
+            India: { pattern: "[0-9]{2}-[0-9]{7,10}", placeholder: "91-23456789", example: "Código STD-número (ex: 91-23456789)" },
+            Indonesia: { pattern: "[0-9]{2}-[0-9]{5,10}", placeholder: "62-12345678", example: "Código de área-número (ex: 62-1234567)" },
+            Japon: { pattern: "[0-9]{2}-[0-9]{5,13}", placeholder: "81-12345678", example: "Código de área-número (ex: 81-12345678)" },
+            Mexico: { pattern: "[0-9]{2}-[0-9]{10}", placeholder: "52-12345678", example: "Lada-número (ex: 52-12345678)" },
+            Rusia: { pattern: "[0-9]{1}-[0-9]{10}", placeholder: "7-1234567", example: "Código-número (ex: 7-1234567)" },
         };
 
         // Función para actualizar el formato del teléfono según el país
@@ -369,15 +300,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             phoneInput.pattern = format.pattern;
             phoneInput.placeholder = format.placeholder;
             phoneInput.value = "";
-
             phoneHelp.textContent = `Debe seguir el siguiente formato: ${format.example}`;
         }
 
         document.getElementById("country").addEventListener("change", actualizarFormatoTelefono);
-
-        document.addEventListener("DOMContentLoaded", function () {
-            actualizarFormatoTelefono();
-        });
+        document.addEventListener("DOMContentLoaded", actualizarFormatoTelefono);
     </script>
 </body>
 

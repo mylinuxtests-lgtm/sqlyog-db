@@ -116,7 +116,6 @@ if ($result->num_rows > 0) {
 
     echo "<div class='user-header'>";
     echo "<h2>Detalles del Estudiante</h2>";
-    echo "<a href='students.php'>Volver a registros</a>";
     echo "</div>";
 
     echo "<div class='table-container'>";
@@ -193,7 +192,6 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 
