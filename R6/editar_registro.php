@@ -23,6 +23,17 @@ if ($student_id <= 0) {
     die("ID inválido");
 }
 
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id'])) {
+
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
+        $max_file_size = 5 * 1024 * 1024;
+        if ($_FILES['photo']['size'] > $max_file_size) {
+            die("Error: La imagen es demasiado grande. El tamaño máximo permitido es 5MB.");
+        }
+    }
+}
+
 // Obtiene los datos del estudiante
 $sql = "SELECT * FROM student WHERE id_students = $student_id";
 $result = $conn->query($sql);
@@ -125,7 +136,7 @@ $especifique_valor = $student['especifique'] ?? "";
                 required /><br /><br />
         </div>
         <div class="form-box">
-            <label for="country" class="col-sm-3 control-label">Nacionalidad: <span class="error">*</span><br /></label>
+            <label for="country" class="col-sm-3 control-label">Pais de residencia: <span class="error">*</span><br /></label>
             <div class="col-12">
                 <select id="country" name="country" class="form-control" onchange="actualizarFormatoTelefono()">
                     <option value="Alemania" <?php echo ($pais_valor == 'Alemania') ? 'selected' : ''; ?>>Alemania
@@ -151,6 +162,7 @@ $especifique_valor = $student['especifique'] ?? "";
             <div class="photo-container">
                 <div class="photo-upload">
                     <input type="file" id="photo" name="photo" accept="image/*" />
+                    <small>Tamaño máximo: 5MB</small>
                 </div>
                 <div class="photo-example">
                     <small>Foto actual:</small><br />
@@ -235,6 +247,7 @@ $especifique_valor = $student['especifique'] ?? "";
         // Validación del formulario
         (function () {
             "use strict";
+            const maxFileSize = 5 * 1024 * 1024;
 
             const forms = document.querySelectorAll(".needs-validation");
 
@@ -242,6 +255,18 @@ $especifique_valor = $student['especifique'] ?? "";
                 form.addEventListener(
                     "submit",
                     function (event) {
+                        // Validar tamaño de archivo
+                        const photoInput = document.getElementById('photo');
+                        if (photoInput.files.length > 0) {
+                            const fileSize = photoInput.files[0].size;
+                            if (fileSize > maxFileSize) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                alert('La imagen es demasiado grande. El tamaño máximo permitido es 5MB.');
+                                return false;
+                            }
+                        }
+
                         if (!form.checkValidity()) {
                             event.preventDefault();
                             event.stopPropagation();
@@ -327,7 +352,7 @@ $especifique_valor = $student['especifique'] ?? "";
             }
         }
 
-        // Inicializar formato
+
         actualizarFormatoTelefono();
     </script>
 </body>

@@ -62,32 +62,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Procesar archivos subidos
     $archivos = [
-        'photo' => ['prefix' => 'foto', 'required' => true],
+        'photo' => ['prefix' => 'foto', 'required' => true, 'max_size' => 5 * 1024 * 1024], // 5MB
         'list' => ['prefix' => 'lista', 'required' => true],
         'excel' => ['prefix' => 'excel', 'required' => true]
     ];
 
     foreach ($archivos as $fileInput => $config) {
         if (isset($_FILES[$fileInput]) && $_FILES[$fileInput]['error'] == 0) {
+            // Verificar tamaño máximo
+            if ($fileInput === 'photo' && isset($config['max_size']) && $_FILES[$fileInput]['size'] > $config['max_size']) {
+                $error_message = "La imagen es demasiado grande. El tamaño máximo permitido es 5MB.";
+                break;
+            }
+
             $ext = pathinfo($_FILES[$fileInput]['name'], PATHINFO_EXTENSION);
             $name = "{$config['prefix']}_" . time() . ".$ext";
             move_uploaded_file($_FILES[$fileInput]['tmp_name'], $upload_dir . $name);
             ${$config['prefix'] . '_path'} = $upload_dir . $name;
+        } elseif (isset($_FILES[$fileInput]) && $_FILES[$fileInput]['error'] == UPLOAD_ERR_INI_SIZE) {
+            $error_message = "El archivo es demasiado grande. El tamaño máximo permitido es 5MB.";
+            break;
         }
     }
 
-    // Insertar en la base de datos
-    $id_usuario_registro = $_SESSION["id_usuario"] ?? null;
-    $sql = "INSERT INTO student (nombre, id_sexo, especifique, edad, nacimiento, id_paises, telefono, correo, domicilio, foto, lista, excel, fecha_registro, id_usuario_registro, visible) 
+
+    if (isset($error_message)) {
+    } else {
+        $id_usuario_registro = $_SESSION["id_usuario"] ?? null;
+        $sql = "INSERT INTO student (nombre, id_sexo, especifique, edad, nacimiento, id_paises, telefono, correo, domicilio, foto, lista, excel, fecha_registro, id_usuario_registro, visible) 
             VALUES ('$nombre', $id_sexo, '$especifique', $edad, '$nacimiento', $id_paises, '$telefono', '$correo', '$domicilio', '$foto_path', '$lista_path', '$excel_path', NOW(), $id_usuario_registro, 1)";
 
-    if ($conn->query($sql) === TRUE) {
-        header("Location: students.php");
-        exit();
-    } else {
-        $error_message = "Error: " . $conn->error;
+        if ($conn->query($sql) === TRUE) {
+            header("Location: students.php");
+            exit();
+        } else {
+            $error_message = "Error: " . $conn->error;
+        }
     }
-
     $conn->close();
 }
 ?>
@@ -156,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <div class="form-box">
-                <label for="country" class="col-sm-3 control-label">Nacionalidad: <span
+                <label for="country" class="col-sm-3 control-label">Pais de residencia: <span
                         class="error">*</span><br /></label>
                 <div class="col-12">
                     <select id="country" name="country" class="form-control" onchange="actualizarFormatoTelefono()">
@@ -179,6 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="photo-container">
                     <div class="photo-upload">
                         <input type="file" id="photo" name="photo" accept="image/*" required />
+                        <small>Tamaño máximo: 5MB</small>
                     </div>
                     <div class="photo-example">
                         <label for="example"> Ejemplo </label> <br />
@@ -235,7 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
         <div style="text-align: center; margin-top: 20px;">
-            <a href="students.php" class="btn-students">Ver estudiantes registrados</a>
+            <a href="students.php" class="btn-students">Volver a registros</a>
         </div>
     </div>
 
@@ -262,9 +274,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         (function () {
             "use strict";
             const forms = document.querySelectorAll(".needs-validation");
+            const maxFileSize = 5 * 1024 * 1024;
 
             Array.from(forms).forEach(function (form) {
                 form.addEventListener("submit", function (event) {
+                    // Validar tamaño de archivo
+                    const photoInput = document.getElementById('photo');
+                    if (photoInput.files.length > 0) {
+                        const fileSize = photoInput.files[0].size;
+                        if (fileSize > maxFileSize) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            alert('La imagen es demasiado grande. El tamaño máximo permitido es 5MB.');
+                            return false;
+                        }
+                    }
+
                     if (!form.checkValidity()) {
                         event.preventDefault();
                         event.stopPropagation();

@@ -20,7 +20,7 @@ if ($action == 'eliminar') {
     if (!$permiso_borrar) {
         die("No tienes permisos para eliminar registros.");
     }
-    
+
     $student_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
     if ($student_id <= 0) {
         die("ID inválido");
@@ -31,22 +31,26 @@ if ($action == 'eliminar') {
         ?>
         <!DOCTYPE html>
         <html lang="es">
+
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Confirmar Eliminación</title>
             <link rel="stylesheet" href="style.css" media="screen" />
         </head>
+
         <body>
             <div class="confirmation-container">
                 <h2>¿Estás seguro de eliminar este registro?</h2>
                 <p>Esta acción no se puede deshacer.</p>
                 <div class="buttons">
-                    <a href="gestion.php?action=eliminar&id=<?php echo $student_id; ?>&confirm=true" class="btn btn-danger">Sí, eliminar</a>
+                    <a href="gestion.php?action=eliminar&id=<?php echo $student_id; ?>&confirm=true" class="btn btn-danger">Sí,
+                        eliminar</a>
                     <a href="students.php" class="btn btn-secondary">Cancelar</a>
                 </div>
             </div>
         </body>
+
         </html>
         <?php
         exit();
@@ -68,7 +72,7 @@ elseif ($action == 'actualizar') {
     if (!$permiso_editar) {
         die("No tienes permisos para editar registros.");
     }
-    
+
     $student_id = intval($_POST['id']);
     if ($student_id <= 0) {
         die("ID inválido");
@@ -86,7 +90,7 @@ elseif ($action == 'actualizar') {
     $domicilio = $conn->real_escape_string($_POST['domicilio']);
 
     // Relacionar sexo a ID
-    $id_sexo = match($sexo) {
+    $id_sexo = match ($sexo) {
         'Masculino' => 1,
         'Femenino' => 2,
         'Otro' => 3,
@@ -95,9 +99,16 @@ elseif ($action == 'actualizar') {
 
     // Relacionar país a ID
     $paises_map = [
-        'Alemania' => 1, 'Brazil' => 2, 'Canada' => 3, 'China' => 4,
-        'Estados Unidos' => 5, 'India' => 6, 'Indonesia' => 7, 
-        'Japon' => 8, 'Mexico' => 9, 'Rusia' => 10
+        'Alemania' => 1,
+        'Brazil' => 2,
+        'Canada' => 3,
+        'China' => 4,
+        'Estados Unidos' => 5,
+        'India' => 6,
+        'Indonesia' => 7,
+        'Japon' => 8,
+        'Mexico' => 9,
+        'Rusia' => 10
     ];
     $id_paises = $paises_map[$pais] ?? 9;
 
@@ -117,13 +128,24 @@ elseif ($action == 'actualizar') {
     $excel_path = $actual['excel'];
 
     // Procesar archivos subidos
-    $archivos = ['photo' => 'foto', 'list' => 'lista', 'excel' => 'excel'];
-    foreach ($archivos as $fileInput => $prefix) {
+    $archivos = [
+        'photo' => ['prefix' => 'foto', 'max_size' => 5 * 1024 * 1024],
+        'excel' => ['prefix' => 'excel']
+    ];
+
+    foreach ($archivos as $fileInput => $config) {
         if (isset($_FILES[$fileInput]) && $_FILES[$fileInput]['error'] == 0) {
+            // Validar tamaño máximo para la foto
+            if (isset($config['max_size']) && $_FILES[$fileInput]['size'] > $config['max_size']) {
+                die("Error: La imagen es demasiado grande. El tamaño máximo permitido es 5MB.");
+            }
+
             $ext = pathinfo($_FILES[$fileInput]['name'], PATHINFO_EXTENSION);
-            $name = "{$prefix}_" . time() . ".$ext";
+            $name = "{$config['prefix']}_" . time() . ".$ext";
             move_uploaded_file($_FILES[$fileInput]['tmp_name'], $upload_dir . $name);
-            ${$prefix . '_path'} = $upload_dir . $name;
+            ${$config['prefix'] . '_path'} = $upload_dir . $name;
+        } elseif (isset($_FILES[$fileInput]) && $_FILES[$fileInput]['error'] == UPLOAD_ERR_INI_SIZE) {
+            die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
         }
     }
 
