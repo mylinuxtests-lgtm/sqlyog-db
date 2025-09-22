@@ -23,17 +23,6 @@ if ($student_id <= 0) {
     die("ID inválido");
 }
 
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id'])) {
-
-    if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-        $max_file_size = 5 * 1024 * 1024;
-        if ($_FILES['photo']['size'] > $max_file_size) {
-            die("Error: La imagen es demasiado grande. El tamaño máximo permitido es 5MB.");
-        }
-    }
-}
-
 // Obtiene los datos del estudiante
 $sql = "SELECT * FROM student WHERE id_students = $student_id";
 $result = $conn->query($sql);
@@ -137,7 +126,8 @@ $especifique_valor = $student['especifique'] ?? "";
                 required /><br /><br />
         </div>
         <div class="form-box">
-            <label for="country" class="col-sm-3 control-label">Pais de residencia: <span class="error">*</span><br /></label>
+            <label for="country" class="col-sm-3 control-label">Pais de residencia: <span
+                    class="error">*</span><br /></label>
             <div class="col-12">
                 <select id="country" name="country" class="form-control" onchange="actualizarFormatoTelefono()">
                     <option value="Alemania" <?php echo ($pais_valor == 'Alemania') ? 'selected' : ''; ?>>Alemania

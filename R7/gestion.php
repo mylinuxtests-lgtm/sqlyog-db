@@ -8,10 +8,7 @@ $conn->set_charset("utf8mb4");
 
 if ($conn->connect_error) {
     header('Content-Type: application/json');
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error en la conexión: ' . $conn->connect_error
-    ]);
+    echo json_encode(['error' => 'Error en la conexión: ' . $conn->connect_error]);
     exit();
 }
 
@@ -19,58 +16,247 @@ $action = $_GET['action'] ?? ($_POST['action'] ?? '');
 $id_usuario = $_SESSION["id_perfil"] ?? 0;
 $permiso_editar = ($id_usuario == 1 || $id_usuario == 2);
 $permiso_borrar = ($id_usuario == 1);
+$permiso_exportar = ($id_usuario == 1 || $id_usuario == 2);
+$student_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Enviar respuestas
-function sendJsonResponse($success, $message, $httpCode = 200)
-{
-    http_response_code($httpCode);
+// Obtener datos para Bootstrap Table
+if ($action == 'obtener_datos') {
+    if (!isset($_SESSION["usuario"])) {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'No autorizado']);
+        exit();
+    }
+
+    // Obtener parámetros de paginación y búsqueda
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+    $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+    // Construir consulta base
+    $where_condition = "WHERE s.visible = 1";
+
+    // Aplicar búsqueda si existe
+    if (!empty($search)) {
+        $sanitized_search = $conn->real_escape_string($search);
+        $where_condition .= " AND (s.nombre LIKE '%$sanitized_search%' OR 
+                                sex.descripcion LIKE '%$sanitized_search%' OR 
+                                s.especifique LIKE '%$sanitized_search%' OR 
+                                s.edad LIKE '%$sanitized_search%' OR 
+                                p.pais LIKE '%$sanitized_search%' OR 
+                                s.telefono LIKE '%$sanitized_search%' OR 
+                                s.correo LIKE '%$sanitized_search%' OR 
+                                s.domicilio LIKE '%$sanitized_search%')";
+    }
+
+    // Obtener total de registros
+    $count_sql = "SELECT COUNT(*) as total FROM student s 
+                  JOIN sexo sex ON s.id_sexo = sex.id_sexo 
+                  JOIN paises p ON s.id_paises = p.id_paises 
+                  $where_condition";
+    $count_result = $conn->query($count_sql);
+    $total = $count_result->fetch_assoc()['total'];
+
+    // Obtener datos paginados
+    $sql = "SELECT
+              s.id_students AS ID,
+              s.nombre AS Nombre,
+              DATE_FORMAT(s.fecha_registro, '%d-%m-%Y %H:%i') AS Fecha_Registro,
+              DATE_FORMAT(s.fecha_edicion, '%d-%m-%Y %H:%i') AS Fecha_Edicion
+            FROM student s
+            JOIN sexo sex ON s.id_sexo = sex.id_sexo
+            JOIN paises p ON s.id_paises = p.id_paises
+            $where_condition
+            ORDER BY s.id_students
+            LIMIT $offset, $limit";
+
+    $result = $conn->query($sql);
+    $rows = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $rows[] = $row;
+    }
+
+    // Devolver datos en formato JSON
     header('Content-Type: application/json');
     echo json_encode([
-        'success' => $success,
-        'message' => $message
+        'total' => $total,
+        'rows' => $rows
     ]);
     exit();
 }
 
-// Eliminación de registro
-if ($action == 'eliminar') {
-    if (!$permiso_borrar) {
-        sendJsonResponse(false, 'No tienes permisos para eliminar registros.', 403);
+// Obtener detalles de un estudiante específico
+elseif ($action == 'obtener_detalles') {
+    if (!isset($_SESSION["usuario"])) {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'No autorizado']);
+        exit();
     }
 
-    $student_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
     if ($student_id <= 0) {
-        sendJsonResponse(false, 'ID inválido', 400);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'ID inválido']);
+        exit();
+    }
+
+    $sql = "
+    SELECT
+      s.id_students   AS ID,
+      s.nombre        AS Nombre,
+      sex.descripcion AS Sexo,
+      s.especifique   AS Especifique,  
+      s.edad          AS Edad,
+      DATE_FORMAT(s.nacimiento, '%d-%m-%Y') AS Fecha_Nacimiento,
+      p.pais          AS Pais,
+      s.telefono      AS Telefono,
+      s.correo        AS Correo,
+      s.domicilio     AS Domicilio,
+      s.foto          AS Foto,
+      s.lista         AS Lista,
+      s.excel         AS Excel,
+      DATE_FORMAT(s.fecha_registro, '%d-%m-%Y %H:%i') AS Fecha_Registro
+    FROM student s
+    JOIN sexo sex ON s.id_sexo = sex.id_sexo
+    JOIN paises p ON s.id_paises = p.id_paises
+    WHERE s.id_students = $student_id AND s.visible = 1
+    ";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+
+        // Preparar datos para JSON
+        $data = [
+            'ID' => $row['ID'],
+            'Nombre' => $row['Nombre'],
+            'Sexo' => $row['Sexo'],
+            'Especifique' => $row['Especifique'],
+            'Edad' => $row['Edad'],
+            'Fecha_Nacimiento' => $row['Fecha_Nacimiento'],
+            'Pais' => $row['Pais'],
+            'Telefono' => $row['Telefono'],
+            'Correo' => $row['Correo'],
+            'Domicilio' => $row['Domicilio'],
+            'Foto' => $row['Foto'],
+            'Lista' => $row['Lista'],
+            'Excel' => $row['Excel'],
+            'Fecha_Registro' => $row['Fecha_Registro']
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Estudiante no encontrado']);
+    }
+    exit();
+}
+
+// Exportar a CSV
+elseif (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar && $student_id > 0) {
+    $export_sql = "
+    SELECT
+      s.id_students   AS ID,
+      s.nombre        AS Nombre,
+      sex.descripcion AS Sexo,
+      s.especifique   AS Especifique,  
+      s.edad          AS Edad,
+      DATE_FORMAT(s.nacimiento, '%d-%m-%Y') AS Fecha_Nacimiento,
+      p.pais          AS Pais,
+      s.telefono      AS Telefono,
+      s.correo        AS Correo,
+      s.domicilio     AS Domicilio,
+      s.foto          AS Foto,
+      s.lista         AS Lista,
+      s.excel         AS Excel,
+      DATE_FORMAT(s.fecha_registro, '%d-%m-%Y %H:%i') AS Fecha_Registro,
+      DATE_FORMAT(s.fecha_edicion, '%d-%m-%Y %H:%i') AS Fecha_Edicion
+    FROM student s
+    JOIN sexo sex ON s.id_sexo = sex.id_sexo
+    JOIN paises p ON s.id_paises = p.id_paises
+    WHERE s.id_students = $student_id
+    ";
+
+    $export_result = $conn->query($export_sql);
+
+    if ($export_result->num_rows > 0) {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=estudiante_' . $student_id . '_' . date('Y-m-d') . '.csv');
+
+        $output = fopen('php://output', 'w');
+        $row = $export_result->fetch_assoc();
+
+        $csv_data = array(
+            array('Campo', 'Valor'),
+            array('ID', $row['ID']),
+            array('Nombre', $row['Nombre']),
+            array('Sexo', $row['Sexo'] . (!empty($row['Especifique']) ? ' - ' . $row['Especifique'] : '')),
+            array('Edad', $row['Edad']),
+            array('Fecha de Nacimiento', $row['Fecha_Nacimiento']),
+            array('País', $row['Pais']),
+            array('Teléfono', $row['Telefono']),
+            array('Correo', $row['Correo']),
+            array('Domicilio', $row['Domicilio']),
+            array('Foto', $row['Foto']),
+            array('Lista', $row['Lista']),
+            array('Excel', $row['Excel']),
+            array('Fecha de Registro', $row['Fecha_Registro']),
+            array('Fecha de Edición', $row['Fecha_Edicion'])
+        );
+
+        foreach ($csv_data as $line) {
+            fputcsv($output, $line);
+        }
+
+        fclose($output);
+        exit();
+    }
+}
+
+// Eliminación de registro
+elseif ($action == 'eliminar') {
+    if (!$permiso_borrar) {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'No tienes permisos para eliminar registros.']);
+        exit();
+    }
+
+    if ($student_id <= 0) {
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'ID inválido']);
+        exit();
     }
 
     // Verificar confirmación
     if (!isset($_GET['confirm']) || $_GET['confirm'] != 'true') {
-        sendJsonResponse(false, 'Confirmación requerida', 400);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Confirmación requerida']);
+        exit();
     }
 
     $id_usuario_borrador = $_SESSION["id_usuario"] ?? null;
     $sql = "UPDATE student SET visible = 0, fecha_borrado = NOW(), id_usuario_borrador = $id_usuario_borrador WHERE id_students = $student_id";
 
     if ($conn->query($sql) === TRUE) {
-        if ($conn->affected_rows > 0) {
-            sendJsonResponse(true, 'Registro eliminado correctamente');
-        } else {
-            sendJsonResponse(false, 'No se encontró el registro o ya estaba eliminado');
-        }
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'message' => 'Registro eliminado correctamente']);
     } else {
-        sendJsonResponse(false, 'Error al eliminar: ' . $conn->error, 500);
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Error al eliminar: ' . $conn->error]);
     }
+    exit();
 }
 
 // Procesar actualización de registro
 elseif ($action == 'actualizar') {
     if (!$permiso_editar) {
-        sendJsonResponse(false, 'No tienes permisos para editar registros.', 403);
+        die("No tienes permisos para editar registros.");
     }
 
     $student_id = intval($_POST['id']);
     if ($student_id <= 0) {
-        sendJsonResponse(false, 'ID inválido', 400);
+        die("ID inválido");
     }
 
     // Obtener los datos del formulario
@@ -132,7 +318,7 @@ elseif ($action == 'actualizar') {
         if (isset($_FILES[$fileInput]) && $_FILES[$fileInput]['error'] == 0) {
             // Validar tamaño máximo para la foto
             if (isset($config['max_size']) && $_FILES[$fileInput]['size'] > $config['max_size']) {
-                sendJsonResponse(false, 'Error: La imagen es demasiado grande. El tamaño máximo permitido es 5MB.', 400);
+                die("Error: La imagen es demasiado grande. El tamaño máximo permitido es 5MB.");
             }
 
             $ext = pathinfo($_FILES[$fileInput]['name'], PATHINFO_EXTENSION);
@@ -140,7 +326,7 @@ elseif ($action == 'actualizar') {
             move_uploaded_file($_FILES[$fileInput]['tmp_name'], $upload_dir . $name);
             ${$config['prefix'] . '_path'} = $upload_dir . $name;
         } elseif (isset($_FILES[$fileInput]) && $_FILES[$fileInput]['error'] == UPLOAD_ERR_INI_SIZE) {
-            sendJsonResponse(false, 'Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.', 400);
+            die("Error: El archivo es demasiado grande. El tamaño máximo permitido es 5MB.");
         }
     }
 
@@ -167,10 +353,136 @@ elseif ($action == 'actualizar') {
         header("Location: students.php");
         exit();
     } else {
-        sendJsonResponse(false, 'Error al actualizar: ' . $conn->error, 500);
+        echo "Error al actualizar: " . $conn->error;
     }
-} else {
-    sendJsonResponse(false, 'Acción no válida.', 400);
+    exit();
 }
 
+// Mostrar detalles del estudiante
+elseif ($student_id > 0) {
+    $sql = "
+    SELECT
+      s.id_students   AS ID,
+      s.nombre        AS Nombre,
+      sex.descripcion AS Sexo,
+      s.especifique   AS Especifique,  
+      s.edad          AS Edad,
+      DATE_FORMAT(s.nacimiento, '%d-%m-%Y') AS Fecha_Nacimiento,
+      p.pais          AS Pais,
+      s.telefono      AS Telefono,
+      s.correo        AS Correo,
+      s.domicilio     AS Domicilio,
+      s.foto          AS Foto,
+      s.lista         AS Lista,
+      s.excel         AS Excel,
+      DATE_FORMAT(s.fecha_registro, '%d-%m-%Y %H:%i') AS Fecha_Registro,
+      s.visible       AS Visible,
+      DATE_FORMAT(s.fecha_borrado, '%d-%m-%Y %H:%i') AS Fecha_Borrado
+    FROM student s
+    JOIN sexo sex ON s.id_sexo = sex.id_sexo
+    JOIN paises p ON s.id_paises = p.id_paises
+    WHERE s.id_students = $student_id
+    ";
+
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+
+        echo "<div class='user-header'>";
+        echo "<h2>Detalles del Estudiante</h2>";
+        echo "</div>";
+
+        echo "<div class='table-container'>";
+        echo "<table class='students-table'>";
+
+        // Campos principales
+        $fields = [
+            'ID' => 'ID',
+            'Nombre' => 'Nombre',
+            'Sexo' => 'Sexo',
+            'Edad' => 'Edad',
+            'Fecha_Nacimiento' => 'Fecha de Nacimiento',
+            'Pais' => 'País',
+            'Telefono' => 'Teléfono',
+            'Correo' => 'Correo',
+            'Domicilio' => 'Domicilio',
+            'Fecha_Registro' => 'Fecha de Registro'
+        ];
+
+        foreach ($fields as $key => $label) {
+            echo "<tr>";
+            echo "<td><strong>$label</strong></td>";
+
+            if ($key === 'Sexo') {
+                if ($row['Sexo'] == 'Otro' && !empty($row['Especifique'])) {
+                    echo "<td>" . htmlspecialchars($row['Sexo'] . " - " . $row['Especifique']) . "</td>";
+                } else {
+                    echo "<td>" . htmlspecialchars($row[$key]) . "</td>";
+                }
+            } else {
+                echo "<td>" . htmlspecialchars($row[$key] ?? 'N/A') . "</td>";
+            }
+            echo "</tr>";
+        }
+
+        // Archivos
+        echo "<tr>";
+        echo "<td><strong>Foto</strong></td>";
+        echo "<td><img src='" . $row['Foto'] . "' width='120' height='150' style='object-fit: cover; border-radius: 4px;'></td>";
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td><strong>Lista</strong></td>";
+        echo "<td><a href='" . $row['Lista'] . "' download class='action-btn'>Descargar Lista</a></td>";
+        echo "</tr>";
+
+        echo "<tr>";
+        echo "<td><strong>Archivo Excel</strong></td>";
+        echo "<td><a href='" . $row['Excel'] . "' class='action-btn'>Descargar Excel</a></td>";
+        echo "</tr>";
+
+        echo "</table>";
+        echo "</div>";
+
+
+        if ($permiso_exportar) {
+            echo "<a href='gestion.php?id=" . $student_id . "&export=csv' class='export-csv-btn'>Exportar a CSV</a>";
+        }
+
+        echo "</div>";
+
+    } else {
+        echo "<div class='user-header'>";
+        echo "<h2>Error</h2>";
+        echo "<a href='students.php'>Volver a estudiantes</a>";
+        echo "</div>";
+
+        echo "<div style='text-align: center; margin: 40px;'>";
+        echo "<p>ID incorrecta: $student_id</p>";
+        echo "</div>";
+    }
+
+    echo "</body></html>";
+    exit();
+}
+
+$conn->close();
+
+// Si no hay acción específica, mostrar error
+echo "Acción no válida o parámetros incorrectos.";
 ?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" media="screen" />
+    <title>Gestión de Estudiantes</title>
+</head>
+
+<body>
+</body>
+
+</html>

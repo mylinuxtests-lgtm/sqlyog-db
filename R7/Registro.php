@@ -131,8 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href="login.php?action=logout">Cerrar sesión</a>
         </div>
 
-        <form id="registroForm" action="Registro.php" method="post" enctype="multipart/form-data" autocomplete="off"
-            class="needs-validation" novalidate>
+        <form id="registroForm" action="Registro.php" method="post" enctype="multipart/form-data" autocomplete="off" class="needs-validation" novalidate>
             <div class="form-container">
                 <h2>Por favor, completa todos los campos</h2>
                 <h2><span class="error">* Campo Obligatorio</span></h2>
@@ -259,11 +258,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script>
-        // SweetAlert2 para confirmación de envío
-        document.getElementById('registroForm').addEventListener('submit', function (e) {
+        // Confirmación de envío
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            // Validar formulario primero
+            
+            // Validar formulario
             if (!this.checkValidity()) {
                 this.classList.add('was-validated');
                 return;
@@ -285,10 +284,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
         });
 
-        // SweetAlert2 para restablecer formulario
-        document.getElementById('btnReset').addEventListener('click', function (e) {
+        // Restablecer formulario
+        document.getElementById('btnReset').addEventListener('click', function(e) {
             e.preventDefault();
-
+            
             Swal.fire({
                 title: '¿Restablecer formulario?',
                 text: "Se perderán todos los datos ingresados",
