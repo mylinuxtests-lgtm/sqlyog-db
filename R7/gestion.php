@@ -445,6 +445,9 @@ elseif ($student_id > 0) {
         echo "</table>";
         echo "</div>";
 
+        echo "<div style='text-align: center; margin-top: 20px;'>";
+        echo "<a href='students.php' class='action-btn'>Volver a Estudiantes</a>";
+
 
         if ($permiso_exportar) {
             echo "<a href='gestion.php?id=" . $student_id . "&export=csv' class='export-csv-btn'>Exportar a CSV</a>";
