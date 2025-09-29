@@ -27,10 +27,23 @@ if ($action == 'obtener_datos') {
         exit();
     }
 
-    // Obtener parámetros de paginación y búsqueda
+    // Parámetros de paginación, búsqueda y ordenamiento
     $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
     $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
     $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    $sort = isset($_GET['sort']) ? trim($_GET['sort']) : 's.id_students';
+    $order = isset($_GET['order']) ? trim($_GET['order']) : 'asc';
+
+    // Validar y mapear campos de ordenamiento
+    $allowed_sorts = [
+        'ID' => 's.id_students',
+        'Nombre' => 's.nombre',
+        'Fecha_Registro' => 's.fecha_registro',
+        'Fecha_Edicion' => 's.fecha_edicion'
+    ];
+    
+    $sort_field = $allowed_sorts[$sort] ?? 's.id_students';
+    $order = strtolower($order) === 'desc' ? 'DESC' : 'ASC';
 
     // Construir consulta base
     $where_condition = "WHERE s.visible = 1";
@@ -56,7 +69,7 @@ if ($action == 'obtener_datos') {
     $count_result = $conn->query($count_sql);
     $total = $count_result->fetch_assoc()['total'];
 
-    // Obtener datos paginados
+    // Obtener datos paginados y ordenados
     $sql = "SELECT
               s.id_students AS ID,
               s.nombre AS Nombre,
@@ -66,7 +79,7 @@ if ($action == 'obtener_datos') {
             JOIN sexo sex ON s.id_sexo = sex.id_sexo
             JOIN paises p ON s.id_paises = p.id_paises
             $where_condition
-            ORDER BY s.id_students
+            ORDER BY $sort_field $order
             LIMIT $offset, $limit";
 
     $result = $conn->query($sql);
