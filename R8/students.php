@@ -164,6 +164,12 @@ $permiso_exportar = ($id_usuario == 1 || $id_usuario == 2);
           }
 
           let especifique = data.Especifique ? `<br><strong>Especifique:</strong> ${data.Especifique}` : '';
+          const permisoExportar = <?php echo $permiso_exportar ? 'true' : 'false'; ?>;
+          
+          let exportButton = '';
+          if (permisoExportar) {
+            exportButton = `<a href="gestion.php?id=${data.ID}&export=csv" class="action-btn">Exportar CSV</a>`;
+          }
           
           Swal.fire({
             title: `Detalles del estudiante: ${data.Nombre}`,
@@ -184,7 +190,7 @@ $permiso_exportar = ($id_usuario == 1 || $id_usuario == 2);
                   <div style="margin-top: 10px;">
                     <a href="${data.Lista}" download class="action-btn">Descargar Lista</a>
                     <a href="${data.Excel}" download class="action-btn">Descargar Excel</a>
-                    <a href="gestion.php?id=${data.ID}&export=csv" class="action-btn">Exportar CSV</a>
+                    ${exportButton}
                   </div>
                 </div>
               </div>

@@ -153,7 +153,7 @@ elseif ($action == 'obtener_detalles') {
     exit();
 }
 
-// Exportación COMPLETA a CSV - TODOS los registros con información completa
+// Exportación completa a csv
 elseif (isset($_GET['export']) && $_GET['export'] == 'all_csv' && $permiso_exportar) {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=estudiantes_completo_' . date('Y-m-d') . '.csv');
@@ -227,8 +227,8 @@ elseif (isset($_GET['export']) && $_GET['export'] == 'all_csv' && $permiso_expor
     exit();
 }
 
-// Exportación INDIVIDUAL a CSV - Un solo registro
-elseif (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar && $student_id > 0) {
+// Exportación individual de registro a csv
+elseif (isset($_GET['export']) && $_GET['export'] == 'csv' && $permiso_exportar) {
     $export_sql = "
     SELECT
       s.id_students   AS ID,

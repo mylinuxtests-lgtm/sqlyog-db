@@ -281,7 +281,7 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
             // Crear FormData para enviar archivos
             const formData = new FormData(this);
             
-            // Mostrar loading
+            // Mostrar carga
             Swal.fire({
                 title: 'Registrando...',
                 text: 'Por favor espere',
